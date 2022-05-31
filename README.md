@@ -67,14 +67,10 @@ JPA등 AJAX를 최대한 활용하지못한 점
 기타 이러한 아쉬운점등을 보완하여 다음 토이프로젝트나 혹은 팀단위 프로젝트의경우 조금 더 효율적으로 해야할것같다
 <br><br><br><br>
 
-
-요구사항 명세서
-https://docs.google.com/spreadsheets/d/16LR9wmd2Au-YZivPgi9u1flm0yd9B6qWWQ7rDZ4PSxk/edit#gid=0
-
 ERD - draw.io
 https://app.diagrams.net/#HSpider-Webs%2Fproject%2Fmain%2FERD
 
-ERD - 엑셀
+DB - 엑셀
 https://docs.google.com/spreadsheets/d/15F4yysVkMPwydwkIkiJJAresrJctdSHgpmIC8dA3-qY/edit#gid=0
 
 간트차트 
