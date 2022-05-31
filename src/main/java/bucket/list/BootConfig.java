@@ -31,7 +31,8 @@ public class BootConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/*/write")
-                .addPathPatterns("/community/create");
+                .addPathPatterns("/community/create")
+                .addPathPatterns("/participation/comment/*");
     }
 
 
