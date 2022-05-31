@@ -56,12 +56,14 @@
 
 <h2>프로젝트 대표기능</h2>
 1. 로그인하여 마이페이지 화면에서 본인이 작성한 글들을 일괄적으로 볼 수 있음<br>
-![마이페이지](https://user-images.githubusercontent.com/105139722/171076298-c929e78a-1f4e-4394-b1a4-d7f96df6506c.png)
+<img src="https://user-images.githubusercontent.com/105139722/171076298-c929e78a-1f4e-4394-b1a4-d7f96df6506c.png">
 
 2. 댓글기능을 구현하여, 버킷리스트의 참석인원을 모집 할 수 있습니다<br>
-3. 커뮤니티 기능을 활성화하여, 다른사람의 버킷리스트를 공유 할 수 있다<br>
+<img src="https://user-images.githubusercontent.com/105139722/171076764-d893f934-12c2-45fe-9d1c-9140db2f7105.png"> 
+3. 공지사항 글쓰기 삭제의경우 관리자에게만 권한 부여<br>
+<img src="https://user-images.githubusercontent.com/105139722/171076845-c69fdca3-e7c8-4c80-b8d7-0c8393335dea.png"> 
 4. 고객센터 게시글을 비공개글 여부를 설정하여 비밀번호 미일치시 접근 차단
-
+<img src="https://user-images.githubusercontent.com/105139722/171076888-db759bd9-8174-41bf-9dd2-e31f940dc62d.png">
 <h2>아쉬웠던 점</h2>
 인원수가 적었고, 시간을 2주라고 제한한점 그렇기에 더 낳은 프로젝트를 하지못했던것같다.
 관계형데이터베이스에대해 충분히 공부하지 않고 하지않은점
