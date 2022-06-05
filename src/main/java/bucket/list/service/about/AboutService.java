@@ -4,6 +4,8 @@ import bucket.list.domain.About;
 import bucket.list.repository.about.AboutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class AboutService {
 
     //글작성
     @Transactional
+    @CacheEvict(value = "allContentList", allEntries = true)
     public void save(About about, MultipartFile file) throws IOException {
 
 //        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
@@ -61,6 +64,7 @@ public class AboutService {
     }
     //게시글리스트 처리, 최신글 정렬
     //페이징구현하기위해 Pageable을 매개변수입력
+    @Cacheable(value ="allContentList")
     public Page<About> allContentList(Pageable pageable) {
 
         Page<About> page = aboutRepository.findAll(pageable);
