@@ -82,6 +82,7 @@ public class AboutService {
     }
 
     @Transactional
+    @CacheEvict(value = "allContentList", allEntries = true)
     //글삭제메서드
     public void deleteContent(Integer aboutnumber){
         aboutRepository.deleteById(aboutnumber);
