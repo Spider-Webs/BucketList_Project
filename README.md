@@ -87,12 +87,16 @@
 <ul>
   <li>자주 변경되는 데이터일수록 Cache 적용 신중하게 선택해야 한다.</li>
   <li>데이터의 무결성이 깨질 염려가 있다.</li>
-</ul>  
+</ul>
+<hr>
+<h4>검색기능 추가</h4>
+메인페이지 화면에서 참여하기 게시글에대한 검색기능 추가 
+<a href="https://blog.naver.com/dyko615/222761676689">검색기능 정리</a>
+현재는 참여하기에대한 게시글만 검색기능을 추가하였다.. 이후 추가적으로 셀렉트 박스를 통해 커뮤니티, 참여하기에대해 각각 검색기능을 설정할지 아님 통합검색기능을 설정할지 
+생각해봐야겠다.
 
 <br><br><br><br>
 
-ERD - draw.io
-https://app.diagrams.net/#HSpider-Webs%2Fproject%2Fmain%2FERD
 
 DB - 엑셀
 https://docs.google.com/spreadsheets/d/15F4yysVkMPwydwkIkiJJAresrJctdSHgpmIC8dA3-qY/edit#gid=0
