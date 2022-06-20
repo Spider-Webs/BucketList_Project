@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,9 +47,9 @@
                     </section>
                 </article>
                 <br>
-                <button type="button" th:if="${session.adminid != null}" class="btn btn-success"  th:onclick="|location.href='@{/about/edit/{aboutnumber}/(aboutnumber=${about.aboutnumber})}'|">수정하기</button>
+                <button type="button" sec:authorize="hasAnyAuthority('ADMIN')" class="btn btn-success"  th:onclick="|location.href='@{/about/edit/{aboutnumber}/(aboutnumber=${about.aboutnumber})}'|">수정하기</button>
                 <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/about}'|">목록으로</button>
-                <button type="button" th:if="${session.adminid != null}" class="btn btn-danger" th:onclick="|location.href='@{/about/delete/{aboutnumber}/(aboutnumber=${about.aboutnumber})}'|">삭제하기</button>
+                <button type="button" sec:authorize="hasAnyAuthority('ADMIN')" class="btn btn-danger" th:onclick="|location.href='@{/about/delete/{aboutnumber}/(aboutnumber=${about.aboutnumber})}'|">삭제하기</button>
             </div>
         </div>
     </div>
