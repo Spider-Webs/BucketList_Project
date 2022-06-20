@@ -1,9 +1,10 @@
 package bucket.list.dto;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
-public class AddressEmbed {
+public class AddressEmbed implements Serializable {
 
     private String zipcode;
     private String streetAdr;
