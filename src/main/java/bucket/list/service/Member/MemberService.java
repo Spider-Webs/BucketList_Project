@@ -101,7 +101,7 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         Member member = memberRepository.findByMemberEmail(attributes.getMemberEmail())
                 .map(entity -> entity.update(attributes.getMemberName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
-
+        System.out.println("호출");
 
         return memberRepository.save(member);
     }

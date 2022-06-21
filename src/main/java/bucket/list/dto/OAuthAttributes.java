@@ -5,12 +5,13 @@ import bucket.list.domain.Role;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 //추가
 @Getter
 public class OAuthAttributes {
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes = new HashMap<>();
     private String nameAttributeKey;
     private String memberName;
     private String memberEmail;
@@ -39,8 +40,8 @@ public class OAuthAttributes {
     private static OAuthAttributes ofGoogle(String userNameAttributeName,
                                             Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .memberName((String) attributes.get("memberName"))
-                .memberEmail((String) attributes.get("memberEmail"))
+                .memberName((String) attributes.get("name"))
+                .memberEmail((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
