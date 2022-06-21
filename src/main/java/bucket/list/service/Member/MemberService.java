@@ -105,10 +105,12 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
         return memberRepository.save(member);
     }
+    //비밀번호 찾기시 기재한 이메일과, 가입당시 이메일 일치하는지 확인하는 메서드
     public void equalEmail(String memberEmail){
         Optional<Member> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
+        
+        if(byMemberEmail.isEmpty()){
 
-        if(byMemberEmail==null){
             throw new IllegalStateException("가입되어있지않는 이메일입니다 다시 입력해주세요");
         }
     }
