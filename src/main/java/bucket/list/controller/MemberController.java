@@ -1,13 +1,19 @@
 package bucket.list.controller;
 
+import bucket.list.LoginUser;
 import bucket.list.domain.Member;
 import bucket.list.domain.User;
 import bucket.list.dto.MailDto;
 import bucket.list.dto.MemberFormDto;
+import bucket.list.dto.SecurityMember;
+import bucket.list.dto.SessionMember;
+import bucket.list.service.Community.CommunityService;
 import bucket.list.service.Member.MemberService;
+import bucket.list.service.Participation.ParticipationService;
 import bucket.list.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
@@ -22,10 +29,11 @@ import javax.validation.Valid;
 @RequestMapping("/members")
 public class MemberController {
 
+
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-
-
+    private final ParticipationService participationService;
+    private final CommunityService communityService;
 
     @GetMapping("/create")
     public String createForm(Model model){
@@ -68,13 +76,13 @@ public class MemberController {
         return "members/login";
     }
 
-    @GetMapping("findPassword")
+    @GetMapping("/findPassword")
     public String findPassword(){
 
         return "members/findPassword";
     }
 
-    @PostMapping("findPassword")
+    @PostMapping("/findPassword")
     public String sendMail(@RequestParam String memberEmail,Model model){
 
         try {
@@ -89,6 +97,31 @@ public class MemberController {
         }
 
         return "members/sendMailSuccess";
+    }
+
+    @GetMapping("/mypage")
+    public String myPage(@AuthenticationPrincipal SecurityMember securityMember, @LoginUser SessionMember sessionMember, Model model){
+
+
+        if(securityMember !=null){
+            model.addAttribute("participation",participationService.selectAllSQL(securityMember.getMember().getMemberId()));
+            model.addAttribute("community",communityService.selectAllSQL(securityMember.getMember().getMemberId()));
+            model.addAttribute("member",securityMember.getMember());
+            System.out.println("기본"+securityMember.getMember().getMemberId());
+
+            return "members/mypage";
+        }else if(sessionMember !=null){
+            model.addAttribute("participation",participationService.selectAllSQL(sessionMember.getMemberName()));
+            model.addAttribute("community",communityService.selectAllSQL(sessionMember.getMemberName()));
+            model.addAttribute("member",sessionMember);
+            System.out.println("소셜로그인 : " + sessionMember.getMemberName());
+            System.out.println(sessionMember);
+            return "members/mypage";
+        }else{
+            return null;
+        }
+
+
     }
 
 
