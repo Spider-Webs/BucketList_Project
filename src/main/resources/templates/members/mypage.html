@@ -22,17 +22,13 @@
     <div class="card shadow">
         <div class="card-body">
             <h4 class="card-title">회원정보</h4>
-            <table class="table table-hover" id='board_list'>
+            <table class="table table-hover">
                 <thead>
-                <tr th:each="user : ${user}">
-                    <th class="text-center d-none d-md-table-cell">아이디</th>
-                    <td class="text-center d-none d-md-table-cell" th:text="${user.user_id}">아이디<br></td>
+                <tr th:each="member : ${member}">
                     <th class="text-center d-none d-md-table-cell">이름</th>
-                    <td class="text-center d-none d-md-table-cell" th:text="${user.user_name}">이름</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${member.memberName}">이름</td>
                     <th class="text-center d-none d-md-table-cell">이메일</th>
-                    <td class="text-center d-none d-md-table-cell" th:text="${user.user_email}">이메일</td>
-                    <th class="text-center d-none d-md-table-cell">전화번호</th>
-                    <td class="text-center d-none d-md-table-cell" th:text="${user.user_phone}">전화번호</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${member.memberEmail}">이메일</td>
                 </tr>
                 </thead>
             </table>
@@ -45,7 +41,7 @@
     <div class="card shadow">
         <div class="card-body">
             <h4 class="card-title">내가 작성한 커뮤니티</h4>
-            <table class="table table-hover" id='board_list'>
+            <table class="table table-hover" >
                 <thead>
                 <tr>
                     <th class="text-center d-none d-md-table-cell">글번호</th>
@@ -55,14 +51,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="data : ${data}">
-                    <td class="text-center d-none d-md-table-cell" th:text="${data.communityid}">글번호</td>
+                <tr th:each="community : ${community}">
+                    <td class="text-center d-none d-md-table-cell" th:text="${community.communityid}">글번호</td>
                     <!--질의할부분-->
                     <!--                    <input type="hidden" th:text="${about_item.about_text}">-->
                     <!--                    <input type="hidden" th:text="${about_item.about_file}">-->
-                    <td><a th:href="@{|/community/finddetail/${data.communityid}|}"><span th:text="${data.communitysubject}">제목</span></a></td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${data.communitytag}">태그</td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${data.communitycreatedate}">작성일</td>
+                    <td><a th:href="@{|/community/finddetail/${data.communityid}|}"><span th:text="${community.communitysubject}">제목</span></a></td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${community.communitytag}">태그</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${community.communitycreatedate}">작성일</td>
                 </tr>
                 </tbody>
             </table>
@@ -87,9 +83,6 @@
                 <tbody>
                 <tr th:each="participation : ${participation}">
                     <td class="text-center d-none d-md-table-cell" th:text="${participation.participationidx}">글번호</td>
-                    <!--질의할부분-->
-                    <!--                    <input type="hidden" th:text="${about_item.about_text}">-->
-                    <!--                    <input type="hidden" th:text="${about_item.about_file}">-->
                     <td><a th:href="@{|/participation/${participation.participationidx}|}"><span th:text="${participation.participation_subject}">제목</span></a></td>
                     <td class="text-center d-none d-md-table-cell" th:text="${participation.participation_tag}">태그</td>
                     <td class="text-center d-none d-md-table-cell" th:text="${participation.participation_date}">작성일</td>
