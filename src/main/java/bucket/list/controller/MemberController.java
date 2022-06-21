@@ -78,10 +78,12 @@ public class MemberController {
     public String sendMail(@RequestParam String memberEmail,Model model){
 
         try {
+
             memberService.equalEmail(memberEmail);
             MailDto mailDto = memberService.changePassword(memberEmail);
             memberService.mailSend(mailDto);
         }catch (IllegalStateException e){
+
             model.addAttribute("errorMessage", e.getMessage());
             return "members/findPassword";
         }
