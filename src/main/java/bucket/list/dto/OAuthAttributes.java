@@ -65,7 +65,8 @@ public class OAuthAttributes {
                 .memberName(memberName)
                 .memberEmail(memberEmail)
                 .picture(picture)
-                .role(Role.USER)
+                .role(Role.SOCIAL)
+                .memberId("SNS_" + memberName)
                 .build();
     }
 }
