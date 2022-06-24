@@ -25,20 +25,20 @@ public class CommentService {
 
 
     @Transactional
-    public List<Comment> allContentList(int comment_number){
-        List<Comment> comments = commentRepository.allContentList(comment_number);
+    public List<Comment> allContentList(int commentNumber){
+        List<Comment> comments = commentRepository.allContentList(commentNumber);
         return comments;
     }
 
     //댓글삭제메서드
     @Transactional
-    public void deleteComment(int commentidx){
-        commentRepository.deleteById(commentidx);
+    public void deleteComment(int commentIdx){
+        commentRepository.deleteById(commentIdx);
 
     }
     //작성자
     @Transactional
-    public String selectIdSQL(int commentidx){
-        return commentRepository.selectIdSQL(commentidx);
+    public String findCommentWriter(int commentIdx){
+        return commentRepository.findCommentWriter(commentIdx);
     }
 }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ParticipationService {
 
     @Value("${file.dir}")
@@ -30,12 +31,12 @@ public class ParticipationService {
     }
 
     //글저장 메서드
-    @Transactional
+
     public void save(Participation participation, MultipartFile file) throws IOException {
 
         //파일의 저장경로를 위한 경로설정
         boolean noneFIle = file.isEmpty();
-
+        //업로드한 파일이 있다면
         if(!noneFIle) {
             String path = fileDir;
 
@@ -51,12 +52,12 @@ public class ParticipationService {
             //파일전송
             file.transferTo(saveFile);
 
-            participation.setParticipation_file(fileName);
+            participation.setParticipationFile(fileName);
 
 
             participationRepository.save(participation);
         }else{
-            participation.setParticipation_file(null);
+            participation.setParticipationFile(null);
             participationRepository.save(participation);
         }
     }
@@ -75,32 +76,49 @@ public class ParticipationService {
 
     //하나의 게시글
     @Transactional
-    public Participation oneContentList(Integer participationidx) {
-        Participation participation = participationRepository.findById(participationidx).get();
+    public Participation oneContentList(Integer participationIdx) {
+        Participation participation = participationRepository.findById(participationIdx).get();
         return participation;
     }
 
     //글삭제 메서드
     @Transactional
-    public void deleteContent(Integer participationidx){
-        participationRepository.deleteById(participationidx);
+    public void deleteContent(Integer participationIdx){
+        participationRepository.deleteById(participationIdx);
     }
 
     //조회수 증가 메서드
     @Transactional
-    public int updateCount(int participationidx){
-        int count = participationRepository.updateCount(participationidx);
+    public int updateCount(int participationIdx){
 
-        return count;
+
+        return  participationRepository.updateCount(participationIdx);
 
     }
 
     @Transactional
-    public String selectIdSQL(int participationidx){
-        return participationRepository.selectIdSQL(participationidx);
+    public String findWriter(int participationIdx){
+        return participationRepository.findWriter(participationIdx);
     }
 
-    public List<Participation> selectAllSQL(String name){
-        return participationRepository.selectAllSQL(name);
+    public List<Participation> findAllWriteList(String participationWriter){
+        return participationRepository.findAllWriteList(participationWriter);
     }
+
+    //메인페이지에서,참여하기 태그 검색하기
+    @Transactional
+    public List<Participation> search(String keyword){
+        List<Participation> participationList = participationRepository.findByParticipationTagContaining(keyword);
+
+        return participationList;
+    }
+    //마이페이지에서 내가작성한 글 검색하기
+    @Transactional
+    public List<Participation> myWriteSearch(String participationWriter, String keyword){
+        List<Participation> myWriteSearch = participationRepository.findByParticipationWriterAndParticipationSubjectContaining(participationWriter, keyword);
+
+        return myWriteSearch;
+
+    }
+
 }

@@ -1,16 +1,15 @@
 package bucket.list.service.Member;
 
+import bucket.list.config.CustomMemberDetails;
 import bucket.list.domain.Member;
-import bucket.list.dto.MailDto;
-import bucket.list.dto.OAuthAttributes;
-import bucket.list.dto.SecurityMember;
-import bucket.list.dto.SessionMember;
+import bucket.list.dto.*;
 import bucket.list.repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,16 +41,23 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
 
     public Member saveMember(Member member){
-//        memberExist(member);
+        memberIdExist(member);
+        memberEmailExist(member);
         return memberRepository.save(member);
     }
 
-//    private void memberExist(Member member){ // 중복가입확인여부 메서드
-//        Optional<Member> findMember = memberRepository.findByMemberId(member.getMemberId());
-//        if(findMember!=null){
-//            throw new IllegalStateException("이미 가입된 회원입니다");
-//        }
-//    }
+    private void memberIdExist(Member member){ // 중복가입확인여부 메서드
+        Optional<Member> memberId = memberRepository.findByMemberId(member.getMemberId());
+        if(!memberId.isEmpty()){
+            throw new IllegalStateException("이미 가입된 아이디입니다");
+        }
+    }
+    private void memberEmailExist(Member member){ // 중복가입확인여부 메서드
+        Optional<Member> memberEmail = memberRepository.findByMemberEmail(member.getMemberEmail());
+        if(!memberEmail.isEmpty()){
+            throw new IllegalStateException("이미 가입된 이메일입니다");
+        }
+    }
 
     //데이터 베이스에서 회원정보를 가져오는 UserDetailService인터페이스에 구현 메서드
     @Override
@@ -59,9 +65,17 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
-        if (!member.isPresent()) throw new UsernameNotFoundException("존재하지 않는 Id 입니다.");
+        
+        if (!member.isPresent()) {
 
-        return new SecurityMember(member.get());
+            throw new UsernameNotFoundException("존재하지 않는 Id 입니다.");
+        }
+
+        httpSession.setAttribute("member",new SessionMember(member.get()));
+
+        return new CustomMemberDetails(member.get());
+
+//        return new SecurityMember(member.get());
 
         //변경 전
 //        return User.builder()
@@ -101,7 +115,7 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         Member member = memberRepository.findByMemberEmail(attributes.getMemberEmail())
                 .map(entity -> entity.update(attributes.getMemberName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
-        System.out.println("호출");
+
 
         return memberRepository.save(member);
     }
@@ -115,23 +129,23 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         }
     }
 
-    //임시비밀번호 생성 및 회원 비밀번호 변경
-    public MailDto changePassword(String memberEmail){
+    //임시비밀번호 생성 및 회원 임시비밀번호 변경
+    public MailDto createOrChangePassword(String memberEmail){
         String tempPassword = getTempPassword();
         MailDto dto = new MailDto();
         dto.setAddress(memberEmail);
         dto.setTitle("버킷리스트 임시비밀번호 발송 이메일입니다");
         dto.setMessage("안녕하세요. 버킷리스트 임시비밀번호 안내 관련 이메일 입니다." + " 회원님의 임시 비밀번호는 "
-                + tempPassword + " 입니다." + "임시 비밀번호로 로그인 후에 비밀번호를 변경을 해주세요");
-        updatePassword(tempPassword,memberEmail);
+                + tempPassword + " 입니다." + "임시 비밀번호로 로그인 후에 마이페이지에서 비밀번호를 변경을 해주세요");
+        tempUpdatePassword(tempPassword,memberEmail);
         return dto;
     }
     //임시비밀번호로 업데이트
-    public void updatePassword(String tempPassword, String memberEmail){
+    public void tempUpdatePassword(String tempPassword, String memberEmail){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String memberPassword = passwordEncoder.encode(tempPassword);
         Long memberId = memberRepository.findByMemberEmail(memberEmail).get().getMemberIdx();
-        memberRepository.updatePassword(memberId,memberPassword);
+        memberRepository.tempUpdatePassword(memberId,memberPassword);
     }
     //메일 발송
     public void mailSend(MailDto mailDto) {
@@ -161,5 +175,23 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
             str += charSet[idx];
         }
         return str;
+    }
+
+    //마이페이지에서 비밀번호 변경메서드, 현재세션에서 로그인한 아이디의 비밀번호 변경
+    public void modifyPassword(UpdatePasswordDto updatePasswordDto, String memberEmail){
+
+        String updatePassword = updatePasswordDto.getUpdatePassword();
+
+        Optional<Member> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
+
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+
+        String memberPassword = encoder.encode(updatePasswordDto.getUpdatePassword());
+
+        byMemberEmail.get().setMemberPassword(memberPassword);
+        memberRepository.save(byMemberEmail.get());
+
     }
 }
