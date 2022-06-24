@@ -2,50 +2,40 @@ package bucket.list.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-@Entity(name = "participation")
+@Entity
 public class Participation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participationidx")
-    private Integer participationidx;
+    private Integer participationIdx;
 
-    private String participation_option;
-
-    private String participation_tag;
+    private String participationOption;
 
 
-    private String participation_place;
+    private String participationTag;
 
+    private String participationText;
 
-    @Column(columnDefinition = "integer default 0")
+    private String participationFile;
+    private LocalDate participationDate;
+    private String participationWriter;
+    private String participationSubject;
 
-    private Integer participation_cost;
-
-    @Column(columnDefinition = "integer default 0")
-
-    private Integer participation_party;
-
-
-    private String participation_text;
-
-    private String participation_file;
-    private LocalDate participation_date;
-    private String participation_writer;
-    private String participation_subject;
-
-
-    @Column(name = "PARTICIPATION_COUNT ", columnDefinition = "integer default 0")
-    private Integer count;
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private Integer participationCount;
 
     @PrePersist
     public void localAboutDate(){
-        this.participation_date = LocalDate.now();
+        this.participationDate = LocalDate.now();
     }
+    
+
 }

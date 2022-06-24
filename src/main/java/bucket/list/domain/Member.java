@@ -2,6 +2,7 @@ package bucket.list.domain;
 
 import bucket.list.dto.AddressEmbed;
 import bucket.list.dto.MemberFormDto;
+import bucket.list.dto.UpdatePasswordDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,11 +56,12 @@ public class Member implements Serializable {
     }
 
     @Builder
-    public Member(String memberName,String memberEmail, String picture, Role role){
+    public Member(String memberName,String memberEmail, String picture, Role role,String memberId){
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.picture = picture;
         this.role = role;
+        this.memberId = memberId;
     }
 
     public Member update(String memberName, String picture){
@@ -82,10 +84,11 @@ public class Member implements Serializable {
         member.setMemberPassword(password);
 
 
-        member.setRole(Role.ADMIN);
+        member.setRole(Role.USER);
 
         return member;
     }
+
 
 
 }
