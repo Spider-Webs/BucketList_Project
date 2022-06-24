@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,11 +22,12 @@
 <div class="container" style="margin-top:50px">
     <div class="card shadow">
         <div class="card-body">
-            <h4 class="card-title">회원정보</h4>
+               <h4 class="card-title">회원정보</h4>
+               <button sec:authorize="hasAnyAuthority('ROLE_USER')"type="button" class="btn btn-secondary" th:onclick="|location.href='@{/members/modifyPassword/}'|">비밀번호 변경</button>
             <table class="table table-hover">
                 <thead>
                 <tr th:each="member : ${member}">
-                    <th class="text-center d-none d-md-table-cell">이름</th>
+                    <th >이름</th>
                     <td class="text-center d-none d-md-table-cell" th:text="${member.memberName}">이름</td>
                     <th class="text-center d-none d-md-table-cell">이메일</th>
                     <td class="text-center d-none d-md-table-cell" th:text="${member.memberEmail}">이메일</td>
@@ -40,7 +42,19 @@
 <div class="container" style="margin-top:50px">
     <div class="card shadow">
         <div class="card-body">
-            <h4 class="card-title">내가 작성한 커뮤니티</h4>
+            <table class="table table-hover" >
+                <tr>
+                    <td>
+                        <h4 class="card-title">내가 작성한 커뮤니티</h4>
+                    </td>
+                    <td>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="내가 작성한 글  검색(제목을 검색해주세요!)" aria-label="Recipient's username" aria-describedby="button-addon2" size="1">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon">검색</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
             <table class="table table-hover" >
                 <thead>
                 <tr>
@@ -53,9 +67,6 @@
                 <tbody>
                 <tr th:each="community : ${community}">
                     <td class="text-center d-none d-md-table-cell" th:text="${community.communityid}">글번호</td>
-                    <!--질의할부분-->
-                    <!--                    <input type="hidden" th:text="${about_item.about_text}">-->
-                    <!--                    <input type="hidden" th:text="${about_item.about_file}">-->
                     <td><a th:href="@{|/community/finddetail/${data.communityid}|}"><span th:text="${community.communitysubject}">제목</span></a></td>
                     <td class="text-center d-none d-md-table-cell" th:text="${community.communitytag}">태그</td>
                     <td class="text-center d-none d-md-table-cell" th:text="${community.communitycreatedate}">작성일</td>
@@ -70,7 +81,22 @@
 <div class="container" style="margin-top:50px">
     <div class="card shadow">
         <div class="card-body">
-            <h4 class="card-title">내가 작성한 참여하기</h4>
+            <table class="table table-hover" >
+                <tr>
+                    <td>
+                        <h4 class="card-title">내가 작성한 참여하기</h4>
+                    </td>
+                    <td>
+                        <form action="/participation/myWriteSearch" method="post">
+                            <div class="input-group mb-3">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input type="text" class="form-control" placeholder="내가 작성한 글 검색(제목을 검색해주세요!)" name="keyword" aria-label="Recipient's username" aria-describedby="button-addon2" size="1">
+                                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">검색</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            </table>
             <table class="table table-hover" id='board_list'>
                 <thead>
                 <tr>
@@ -82,10 +108,10 @@
                 </thead>
                 <tbody>
                 <tr th:each="participation : ${participation}">
-                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participationidx}">글번호</td>
-                    <td><a th:href="@{|/participation/${participation.participationidx}|}"><span th:text="${participation.participation_subject}">제목</span></a></td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participation_tag}">태그</td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participation_date}">작성일</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participationIdx}">글번호</td>
+                    <td><a th:href="@{|/participation/${participation.participationIdx}|}"><span th:text="${participation.participationSubject}">제목</span></a></td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participationTag}">태그</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${participation.participationDate}">작성일</td>
                 </tr>
                 </tbody>
             </table>

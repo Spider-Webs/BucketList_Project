@@ -39,7 +39,7 @@
                                 <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/about/{number}/read(number=${number})}'|">돌아가기</button>
                             </div>
                         </div>
-
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     </form>
                 </div>
             </div>
