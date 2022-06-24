@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
+@Transactional
 @Service
 public class AboutService {
     @Value("${file.dir}")
@@ -29,7 +29,6 @@ public class AboutService {
     }
 
     //글작성
-    @Transactional
     @CacheEvict(value = "allContentList", allEntries = true)
     public void save(About about, MultipartFile file) throws IOException {
 
@@ -62,6 +61,7 @@ public class AboutService {
 
 
     }
+
     //게시글리스트 처리, 최신글 정렬
     //페이징구현하기위해 Pageable을 매개변수입력
     @Cacheable(value ="allContentList")
@@ -81,7 +81,7 @@ public class AboutService {
         return about;
     }
 
-    @Transactional
+
     @CacheEvict(value = "allContentList", allEntries = true)
     //글삭제메서드
     public void deleteContent(Integer aboutnumber){
@@ -89,7 +89,7 @@ public class AboutService {
 
     }
 
-    @Transactional
+
     public String selectIdSQL(int aboutnumber){
         return aboutRepository.selectIdSQL(aboutnumber);
     }
