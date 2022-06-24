@@ -14,18 +14,22 @@ import java.util.List;
 public interface ParticipationRepository extends JpaRepository<Participation,Integer> {
 
     @Modifying
-    @Query("update participation p set p.count = p.count+1 where p.participationidx = :participationidx")
-    int updateCount(@Param("participationidx") int participationidx);
+    @Query("update Participation p set p.participationCount = p.participationCount + 1 where p.participationIdx = :participationIdx")
+    int updateCount(int participationIdx);
 
 
+    @Query("select p from Participation p where p.participationWriter = :participationWriter")
+    List<Participation> findAllWriteList(@Param("participationWriter") String participationWriter);
 
-    @Query(value = "select *from participation where participation_writer=?", nativeQuery = true)
-    List<Participation> selectAllSQL(String name);
 
+    @Query("select p.participationWriter from Participation p where p.participationIdx = :participationIdx")
+    String findWriter(@Param("participationIdx") int participationIdx);
 
-    @Query(value = "select participation_writer from participation where participationidx=?", nativeQuery = true)
-    String selectIdSQL(int participationidx);
+    @Query("select p from Participation p where  p.participationTag like %:keyword%  order by p.participationIdx desc")
+    List<Participation> findByParticipationTagContaining(String keyword);
 
+    @Query("select p from Participation p where p.participationWriter = :participationWriter and p.participationSubject like %:keyword% order by p.participationIdx desc")
+    List<Participation> findByParticipationWriterAndParticipationSubjectContaining(String participationWriter,String keyword);
 
 
 }
