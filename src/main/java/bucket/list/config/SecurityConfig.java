@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/","/about/*/read","/about","/participation","/participation/*"
-                        ,"/community","/community/finddetail/*","/customer","/members/**").permitAll() //permitAll을 통해 인증없이 해당경로에 접근할 수 있다
+                        ,"/community/*","/community","/customer","/members/**").permitAll() //permitAll을 통해 인증없이 해당경로에 접근할 수 있다
 //                .antMatchers("/about/*","/about/edit/*","/about/delete/*").hasAnyRole("ADMIN")//해당 나열한 url은 admin만 접근가능하다
                 .anyRequest().authenticated()//그 이외에는 인증을 요구한다
                 .and()//여기서부터 추가부분 oauth
@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());//인증되지않는 사용자가 리소스에 접근하였을때 수행되는 핸들러
 
+        http.csrf().ignoringAntMatchers("/api/**"); //RestApi 사용 예외처리
     }
 
     @Override
