@@ -66,10 +66,10 @@
                 </thead>
                 <tbody>
                 <tr th:each="community : ${community}">
-                    <td class="text-center d-none d-md-table-cell" th:text="${community.communityid}">글번호</td>
-                    <td><a th:href="@{|/community/finddetail/${data.communityid}|}"><span th:text="${community.communitysubject}">제목</span></a></td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${community.communitytag}">태그</td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${community.communitycreatedate}">작성일</td>
+                        <td class="text-center d-none d-md-table-cell" th:text="${community.communityIdx}">글번호</td>
+                    <td><a th:href="@{|/community/${community.communityIdx}|}"><span th:text="${community.communitySubject}">제목</span></a></td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${community.communityTag}">태그</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${community.communityDate}">작성일</td>
                 </tr>
                 </tbody>
             </table>

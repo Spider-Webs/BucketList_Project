@@ -114,14 +114,14 @@
                     <div class="card h-100">
                         <!-- Product image-->
                         <!--                        <img class="card-img-top" th:if="${data.communityfilepath}==${data.communityfilepath}" th:src="${data.communityfilepath}" alt="고객이 올린 이미지" />-->
-                        <img class="card-img-top" th:if="${data.communityfile !=null }" th:src="|/imagePath/${data.communityfile}|" alt="고객이 올린 이미지" />
-                        <img class="img-fluid" th:unless="${data.communityfile != null}" src="./imgs/noImage.png" alt="img" />
+                        <img class="card-img-top" th:if="${data.communityFile !=null }" th:src="|/imagePath/${data.communityFile}|" alt="고객이 올린 이미지" />
+                        <img class="img-fluid" th:unless="${data.communityFile != null}" src="./imgs/noImage.png" alt="img" />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/finddetail/${data.communityid}|}"><div class="h5 card-title mb-3" th:text="${data.communitysubject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data.communitytag}">태그</div>
+                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/${data.communityIdx}|}"><div class="h5 card-title mb-3" th:text="${data.communitySubject}">Blog post title</div></a>
+                                <div class="fw-bold" th:text="${data.communityTag}">태그</div>
                             </div>
                         </div>
                     </div>
