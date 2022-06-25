@@ -61,34 +61,31 @@ public class ParticipationService {
             participationRepository.save(participation);
         }
     }
-    public Page<Participation> AllContentList(Pageable pageable) {
+    public Page<Participation> allContentList(Pageable pageable) {
         Page<Participation> participation = participationRepository.findAll(pageable);
         return participation;
     }
 
     // 메인 게시글을 위한 코드
-    public Page<Participation> MainAllContentList(Pageable pageable2) {
-        Page<Participation> participation = participationRepository.findAll(pageable2);
+    public Page<Participation> mainAllContentList(Pageable pageable) {
+        Page<Participation> participation = participationRepository.findAll(pageable);
         return participation;
     }
 
 
 
     //하나의 게시글
-    @Transactional
     public Participation oneContentList(Integer participationIdx) {
         Participation participation = participationRepository.findById(participationIdx).get();
         return participation;
     }
 
     //글삭제 메서드
-    @Transactional
     public void deleteContent(Integer participationIdx){
         participationRepository.deleteById(participationIdx);
     }
 
     //조회수 증가 메서드
-    @Transactional
     public int updateCount(int participationIdx){
 
 
@@ -96,7 +93,7 @@ public class ParticipationService {
 
     }
 
-    @Transactional
+
     public String findWriter(int participationIdx){
         return participationRepository.findWriter(participationIdx);
     }
@@ -106,14 +103,12 @@ public class ParticipationService {
     }
 
     //메인페이지에서,참여하기 태그 검색하기
-    @Transactional
     public List<Participation> search(String keyword){
         List<Participation> participationList = participationRepository.findByParticipationTagContaining(keyword);
 
         return participationList;
     }
     //마이페이지에서 내가작성한 글 검색하기
-    @Transactional
     public List<Participation> myWriteSearch(String participationWriter, String keyword){
         List<Participation> myWriteSearch = participationRepository.findByParticipationWriterAndParticipationSubjectContaining(participationWriter, keyword);
 
