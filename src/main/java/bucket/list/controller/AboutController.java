@@ -1,14 +1,12 @@
 package bucket.list.controller;
 
 
-import bucket.list.LoginUser;
+import bucket.list.config.LoginUser;
 import bucket.list.domain.About;
-import bucket.list.domain.Login;
 import bucket.list.dto.SecurityMember;
 import bucket.list.dto.SessionMember;
 import bucket.list.service.about.AboutService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,8 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 @Controller
@@ -38,30 +35,27 @@ public class AboutController {
     //공지사항 메인페이지 메서드
     @GetMapping()
     //페이징구현하기, Pageable 사용하기 page = 기본페이지, size 한페이지 게시글수,sort 정렬 기준 잡을 변수, direction 오름차순인지 내림차순인지
-    public String about(@AuthenticationPrincipal SecurityMember securityMember, Model model,
+    public String about( Model model,
                         @PageableDefault(page = 0, size = 10, sort = "aboutnumber",direction = Sort.Direction.DESC) Pageable pageable,
                         @LoginUser SessionMember member) {
 
         Page<About> about_items = aboutService.allContentList(pageable);
 
-        if (securityMember != null) {
-            model.addAttribute("securityMember", securityMember.getMember());
-            extracted(model, about_items);
-            return "about/about";
-        }else if(member !=null){
+
+       if(member !=null){
             model.addAttribute("member", member);
-            extracted(model, about_items);
+            getPageNumber(model, about_items);
             return "about/about";
         }
         else {
-            extracted(model,about_items);
+            getPageNumber(model,about_items);
             return "about/about";
         }
 
 
     }
 
-    private void extracted(Model model, Page<About> about_items) {
+    private void getPageNumber(Model model, Page<About> about_items) {
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
         int nowPage = about_items.getPageable().getPageNumber() + 1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
@@ -87,11 +81,11 @@ public class AboutController {
 
 
     @PostMapping("/write")
-    public String write(@AuthenticationPrincipal SecurityMember securityMember, @ModelAttribute("about")About about, MultipartFile file) throws IOException {
+    public String write(@LoginUser SessionMember sessionMember, @ModelAttribute("about")About about, MultipartFile file) throws IOException {
 
 
-        if(securityMember != null){
-            about.setAbout_writer(securityMember.getMember().getMemberId());
+        if(sessionMember != null){
+            about.setAbout_writer(sessionMember.getMemberId());
             aboutService.save(about,file);
         }
 
@@ -100,15 +94,15 @@ public class AboutController {
     }
     @GetMapping("/{aboutnumber}/read")
     //글읽는 페이지 메서드
-    public String read(@AuthenticationPrincipal SecurityMember securityMember,@PathVariable Integer aboutnumber, Model model  ){
+    public String read(@LoginUser SessionMember sessionMember,@PathVariable Integer aboutnumber, Model model  ){
 
 
 
         About about = aboutService.oneContentList(aboutnumber);
 
-        if(securityMember != null){
+        if(sessionMember != null){
             model.addAttribute("about",about);
-            model.addAttribute("securityMember", securityMember.getMember());
+            model.addAttribute("securityMember", sessionMember);
             return "about/read";
         }else{
             model.addAttribute("about",about);
