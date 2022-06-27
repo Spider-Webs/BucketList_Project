@@ -102,61 +102,35 @@ public class ParticipationController {
         String writer = participationService.findWriter(participationIdx);       // 해당 게시물의 writer 정보를 dbwriter에 저장함
 
         Participation participation = participationService.oneContentList(participationIdx);
-        List<ParticipationComment> participationComments = participationCommentService.allContentList(participationIdx);
+        List<ParticipationComment> participationComments = participation.getComments();
 
 
 
 
             try{
                 if(sessionMember !=null&&sessionMember.getMemberId().equals(writer)) {
-                    sendParticipation(participationIdx, model, participation, participationComments);
+                    sendParticipation(participationIdx, model, participation, participationComments,sessionMember);
                     model.addAttribute("writer", writer);
                     return "participation/read";
                 }else{
-                    sendParticipation(participationIdx, model, participation, participationComments);
+                    sendParticipation(participationIdx, model, participation, participationComments,sessionMember);
                     return "participation/read";
                 }
             } catch (NullPointerException e){
-                sendParticipation(participationIdx, model, participation, participationComments);
+                sendParticipation(participationIdx, model, participation, participationComments,sessionMember);
                 return "participation/read";
             }
 
 
     }
 
-    private void sendParticipation(int participationIdx, Model model, Participation participation, List<ParticipationComment> participationComments) {
+    private void sendParticipation(int participationIdx, Model model, Participation participation, List<ParticipationComment> participationComments,@LoginUser SessionMember sessionMember) {
         model.addAttribute("participationComments", participationComments);
         model.addAttribute("participation", participation);
         model.addAttribute("participationIdx", participationIdx);
+        model.addAttribute("sessionMember", sessionMember.getMemberId());
     }
 
-    @PostMapping("/login/comment/{participationIdx}")
-    //댓글 저장
-    public String comment(@PathVariable int participationIdx, @LoginUser SessionMember sessionMember,
-                          @ModelAttribute("comment") ParticipationComment participationComment, Model model){
-
-        participationComment.setCommentNumber(participationIdx);
-
-        String loginMember = sessionMember.getMemberId();
-
-        participationComment.setCommentWriter(sessionMember.getMemberId());
-
-        String commentText = participationComment.getCommentText();
-
-
-        participationCommentService.save(participationComment);
-
-        String commentWriter = participationCommentService.findCommentWriter(participationComment.getCommentIdx());
-
-
-        if(loginMember.equals(commentWriter)){
-            model.addAttribute("commentWriter", commentWriter);
-        }
-
-        return "redirect:/participation/{participationIdx}";
-
-
-    }
 
 
     @GetMapping("/edit/{participationIdx}")
@@ -197,15 +171,7 @@ public class ParticipationController {
         return "redirect:/participation/{participationIdx}";
 
     }
-    //댓글삭제
-    @GetMapping("/commentDelete/{commentIdx}/{participationIdx}")
-    public String commentEdit(@PathVariable int participationIdx,
-                              @PathVariable int commentIdx){
 
-        participationCommentService.deleteComment(commentIdx);
-
-        return "redirect:/participation/{participationIdx}";
-    }
 
     @PostMapping("/search")
     public String search(@RequestParam String keyword,Model model){
@@ -218,10 +184,23 @@ public class ParticipationController {
     }
 
     @PostMapping("myWriteSearch")
-    public String myWriteSearch(@RequestParam String keyword,@LoginUser SessionMember sessionMember, Model model){
+    public String myWriteSearch(@RequestParam String keyword,@LoginUser SessionMember sessionMember, Model model,@PageableDefault(page = 0, size = 8,
+            sort = "participationIdx",direction = Sort.Direction.DESC) Pageable pageable){
 
-        List<Participation> myWriteSearch = participationService.myWriteSearch(sessionMember.getMemberId(), keyword);
+        Page<Participation> myWriteSearch = participationService.myWriteSearch(sessionMember.getMemberId(), keyword,pageable);
 
+        //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
+        int nowPage = myWriteSearch.getPageable().getPageNumber() + 1;
+        //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
+        int startPage =Math.max(nowPage-4,1) ;
+        //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
+        //그렇기에 getTotalpage를  min으로설정)
+        int endPage = Math.min(nowPage + 5, myWriteSearch.getTotalPages());
+
+
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         model.addAttribute("myWriteSearch", myWriteSearch);
 
 
