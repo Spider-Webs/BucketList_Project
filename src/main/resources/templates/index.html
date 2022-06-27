@@ -110,18 +110,18 @@
             <h2 class="font-weight-bold" style="color:green">커뮤니티 추천글</h2>
             <hr class ="one">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5" th:each="data : ${data}">
+                <div class="col mb-5" th:each="community : ${community}">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <!--                        <img class="card-img-top" th:if="${data.communityfilepath}==${data.communityfilepath}" th:src="${data.communityfilepath}" alt="고객이 올린 이미지" />-->
-                        <img class="card-img-top" th:if="${data.communityFile !=null }" th:src="|/imagePath/${data.communityFile}|" alt="고객이 올린 이미지" />
-                        <img class="img-fluid" th:unless="${data.communityFile != null}" src="./imgs/noImage.png" alt="img" />
+
+                        <img class="card-img-top" th:if="${community.communityFile !=null }" th:src="|/imagePath/${community.communityFile}|" alt="고객이 올린 이미지" />
+                        <img class="img-fluid" th:unless="${community.communityFile != null}" src="./imgs/noImage.png" alt="img" />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/${data.communityIdx}|}"><div class="h5 card-title mb-3" th:text="${data.communitySubject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data.communityTag}">태그</div>
+                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/${community.communityIdx}|}"><div class="h5 card-title mb-3" th:text="${community.communitySubject}">Blog post title</div></a>
+                                <div class="fw-bold" th:text="${community.communityTag}">태그</div>
                             </div>
                         </div>
                     </div>
@@ -139,17 +139,17 @@
             <h2 class="font-weight-bold" style="color:blue">참여하기 추천글</h2>
             <hr class ="two">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5" th:each="data2 : ${data2}">
+                <div class="col mb-5" th:each="participation : ${participation}">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" th:if="${data2.participationFile !=null }" th:src="|/imagePath/${data2.participationFile}|" alt="고객이 올린 이미지" />
-                        <img class="img-fluid" th:unless="${data2.participationFile != null}" src="./imgs/noImage.png" alt="img" />
+                        <img class="card-img-top" th:if="${participation.participationFile !=null }" th:src="|/imagePath/${participation.participationFile}|" alt="고객이 올린 이미지" />
+                        <img class="img-fluid" th:unless="${participation.participationFile != null}" src="./imgs/noImage.png" alt="img" />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${data2.participationIdx}|}"><div class="h5 card-title mb-3" th:text="${data2.participationSubject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data2.participationTag}">태그</div>
+                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${participation.participationIdx}|}"><div class="h5 card-title mb-3" th:text="${participation.participationSubject}">Blog post title</div></a>
+                                <div class="fw-bold" th:text="${participation.participationTag}">태그</div>
                             </div>
                         </div>
                     </div>

@@ -77,37 +77,51 @@
                                                 <table>
                                                     <tr>
                                                         <div class="fw-bold"
-                                                             th:text="|작성자 : ${commentWriter}|">작성자
+                                                             th:text="|작성자 : ${comments.member.memberId}|">작성자
                                                         </div>
 
                                                     </tr>
                                                     <tr>
                                                         <div th:text="${comments.commentText}"> 답글내용</div>
 
-<!--                                                        <td>-->
-<!--                                                            <button type="button" class="btn btn-light"-->
-<!--                                                                    th:if="${commentIdx !=null}"-->
-<!--                                                                    th:onclick="|location.href='@{|/community/commentEdit/${communityComment.commentIdx}/${communityIdx}|}'|">-->
-<!--                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"-->
-<!--                                                                     height="16" fill="currentColor"-->
-<!--                                                                     class="bi bi-pencil" viewBox="0 0 16 16">-->
-<!--                                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>-->
-<!--                                                                </svg>-->
-<!--                                                            </button>-->
-<!--                                                        </td>-->
-<!--                                                        <td>-->
-<!--                                                            <button type="button" class="btn btn-light"-->
-<!--                                                                    th:if="${commentWriter !=null}"-->
-<!--                                                                    th:onclick="|location.href='@{|/community/commentDelete/${communityComment.commentIdx}/${communityIdx}|}'|">-->
-<!--                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"-->
-<!--                                                                     height="16" fill="currentColor" class="bi bi-trash"-->
-<!--                                                                     viewBox="0 0 16 16">-->
-<!--                                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>-->
-<!--                                                                    <path fill-rule="evenodd"-->
-<!--                                                                          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>-->
-<!--                                                                </svg>-->
-<!--                                                            </button>-->
-<!--                                                        </td>-->
+                                                        <td>
+                                                            <button  th:if=${comments.member.memberId==sessionMember} type="button"  class="btn btn-light" data-bs-toggle="collapse" data-bs-target="#collapseExample12"  aria-expanded="false" aria-controls="collapseExample">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-pencil" viewBox="0 0 16 16">
+                                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1
+                                                                    -.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207
+                                                                    2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761
+                                                                    5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                                                </svg>
+                                                            </button>
+                                                        </td>
+                                                        <div class="collapse" th:id="|collapseExample${comments.commentIdx}|">
+                                                            <form>
+                                                                <input type="hidden" id="commentIdx" th:value="${comments.commentIdx}">
+                                                                <input type="hidden" id="communityIdxModify" th:value="${community.communityIdx}">
+                                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control" id="commentContent" rows="3" ></textarea>
+                                                                </div>
+                                                                <button type="button" id="btn-comment-modify" class="btn btn-outline-primary bi bi-pencil-square"> 수정</button>
+                                                            </form>
+                                                        </div>
+
+                                                        <td>
+                                                            <button type="button" th:if=${comments.member.memberId==sessionMember} class="btn btn-light" th:onclick="|main.commentDelete(${community.communityIdx},${comments.commentIdx})|">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor" class="bi bi-trash"
+                                                                     viewBox="0 0 16 16">
+                                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0
+                                                                    1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                                    <path fill-rule="evenodd"
+                                                                          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0
+                                                                          1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1
+                                                                          1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                                </svg>
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -132,19 +146,20 @@
             </div>
         </div>
         <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
-                alert(errorMessage);
-            }
-        });
-
         const main = {
             init : function() {
                 const _this = this;
                  $('#btn-comment-save').on('click', function () {
                     _this.commentSave();
                  });
+
+            document.querySelectorAll('#btn-comment-modify').forEach(function (item) {
+                 item.addEventListener('click', function () {
+                     const form = this.closest('form');
+                     _this.commentUpdate(form);
+                 });
+            });
+
             },
 
             commentSave : function () {
@@ -159,7 +174,7 @@
                  } else {
                      $.ajax({
                          type: 'POST',
-                         url: '/api/posts/' + data.communityIdx + '/comments',
+                         url: '/api/community/' + data.communityIdx + '/comments',
                         dataType: 'JSON',
                         contentType: 'application/json; charset=utf-8',
                         data: JSON.stringify(data)
@@ -170,8 +185,49 @@
                            alert(JSON.stringify(error));
                            });
                     }
-                 }
-            };
+            },
+
+            commentUpdate : function (form) {
+                const data = {
+                    commentIdx: document.getElementById('commentIdx').value,
+                    communityIdxModify: document.getElementById('communityIdxModify').value,
+                    commentText: document.getElementById('commentContent').value,
+                }
+
+
+                const con_check = confirm("수정하시겠습니까?");
+                if (con_check === true) {
+                    $.ajax({
+                        type: 'PUT',
+                        url: '/api/community/' + data.communityIdxModify + '/comments/' + data.commentIdx,
+                        dataType: 'JSON',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(data)
+                    }).done(function () {
+                        window.location.reload();
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    });
+                }
+            },
+
+            commentDelete : function (communityIdxModify, commentIdx) {
+                const con_check = confirm("삭제하시겠습니까?");
+                if (con_check === true) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/api/community/' + communityIdxModify + '/comments/' + commentIdx,
+                        dataType: 'JSON',
+                    }).done(function () {
+                        alert('댓글이 삭제되었습니다.');
+                        window.location.reload();
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    });
+                }
+            }
+
+        };
             main.init();
 
         </script>
