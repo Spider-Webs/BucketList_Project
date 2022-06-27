@@ -40,6 +40,7 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
     private final JavaMailSender javaMailSender;
 
 
+
     public Member saveMember(Member member){
         memberIdExist(member);
         memberEmailExist(member);
@@ -184,14 +185,20 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
         Optional<Member> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
 
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if(encoder.matches(updatePasswordDto.getCurrentPassword(),byMemberEmail.get().getMemberPassword())) {
 
+            System.out.println("맞은거 출력");
+            String memberPassword = encoder.encode(updatePasswordDto.getUpdatePassword());
 
-        String memberPassword = encoder.encode(updatePasswordDto.getUpdatePassword());
+            byMemberEmail.get().setMemberPassword(memberPassword);
+            memberRepository.save(byMemberEmail.get());
 
-        byMemberEmail.get().setMemberPassword(memberPassword);
-        memberRepository.save(byMemberEmail.get());
+        }else{
+            System.out.println("틀린거 출력");
+            throw new IllegalStateException("기존 비밀번호와 입력하신 현재 비밀번호가 틀립니다.");
+        }
 
     }
 }

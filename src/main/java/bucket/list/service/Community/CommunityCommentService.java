@@ -26,6 +26,7 @@ public class CommunityCommentService {
     private final CommunityRepository communityRepository;
 
 
+    //댓글 저장
     @Transactional
     public int save(String memberId,int communityIdx,CommunityComment communityComment){
 
@@ -42,22 +43,24 @@ public class CommunityCommentService {
         return communityComment.getCommentIdx();
     }
 
-
-//    @Transactional
-//    public List<CommunityComment> allContentList(int commentNumber){
-//        List<CommunityComment> communityComments = communityCommentRepository.allContentList(commentNumber);
-//        return communityComments;
-//    }
-
-    //댓글삭제메서드
+    //댓글 수정
     @Transactional
-    public void deleteComment(int commentIdx){
-        communityCommentRepository.deleteById(commentIdx);
+    public void modify(int commentIdx, CommunityComment communityComment){
+        CommunityComment comment = communityCommentRepository.findById(commentIdx).orElseThrow(() ->
+                new IllegalArgumentException("해당 댓글이 더 이상 존재하지 않습니다"));
 
+        comment.modifyComment(communityComment.getCommentText());
+
+        communityCommentRepository.save(comment);
     }
-    //작성자
-//    @Transactional
-//    public String findCommentWriter(int commentIdx){
-//        return communityCommentRepository.findCommentWriter(commentIdx);
-//    }
+
+    //댓글 삭제
+    @Transactional
+    public void delete(int commentIdx){
+        CommunityComment comment = communityCommentRepository.findById(commentIdx).orElseThrow(() ->
+                new IllegalArgumentException("해당 댓글이 더 이상 존재하지 않습니다"));
+
+        communityCommentRepository.delete(comment);
+    }
+
 }

@@ -71,8 +71,8 @@ public class CommunityService {
 
 
 
-    public List<Community> findAllWriteList(String communityWriter){       // 아이디를 통해 나머지 정보 구하기
-        return communityRepository.findAllWriteList(communityWriter);
+    public Page<Community> findAllWriteList(String communityWriter,Pageable pageable){       // 아이디를 통해 나머지 정보 구하기
+        return communityRepository.findAllWriteList(communityWriter,pageable);
     }
 
     public String findWriter(int communityIdx){
@@ -90,8 +90,8 @@ public class CommunityService {
 
     }
     //마이페이지에서 내가작성한 글 검색하기
-    public List<Community> myWriteSearch(String communityWriter, String keyword){
-        List<Community> myWriteSearch = communityRepository.findByCommunityWriterAndCommunitySubjectContaining(communityWriter, keyword);
+    public Page<Community> myWriteSearch(String communityWriter, String keyword,Pageable pageable){
+        Page<Community> myWriteSearch = communityRepository.findByCommunityWriterAndCommunitySubjectContaining(communityWriter, keyword,pageable);
 
         return myWriteSearch;
 

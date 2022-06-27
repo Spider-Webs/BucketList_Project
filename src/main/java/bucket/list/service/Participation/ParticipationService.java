@@ -98,8 +98,8 @@ public class ParticipationService {
         return participationRepository.findWriter(participationIdx);
     }
 
-    public List<Participation> findAllWriteList(String participationWriter){
-        return participationRepository.findAllWriteList(participationWriter);
+    public Page<Participation> findAllWriteList(String participationWriter,Pageable pageable){
+        return participationRepository.findAllWriteList(participationWriter,pageable);
     }
 
     //메인페이지에서,참여하기 태그 검색하기
@@ -109,8 +109,8 @@ public class ParticipationService {
         return participationList;
     }
     //마이페이지에서 내가작성한 글 검색하기
-    public List<Participation> myWriteSearch(String participationWriter, String keyword){
-        List<Participation> myWriteSearch = participationRepository.findByParticipationWriterAndParticipationSubjectContaining(participationWriter, keyword);
+    public Page<Participation> myWriteSearch(String participationWriter, String keyword,Pageable pageable){
+        Page<Participation> myWriteSearch = participationRepository.findByParticipationWriterAndParticipationSubjectContaining(participationWriter, keyword,pageable);
 
         return myWriteSearch;
 
