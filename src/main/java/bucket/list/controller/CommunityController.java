@@ -87,7 +87,7 @@ public class CommunityController {
         return "redirect:/community";
     }
 
-    @GetMapping("/{communityIdx}")       // 해당 게시물 출력
+    @GetMapping("/{communityIdx}")       // 해당 게시물 상세보기
     public String communityDetail(@PathVariable("communityIdx")int communityIdx, @LoginUser SessionMember sessionMember,
                                   @CookieValue(name = "viewCount") String cookie, HttpServletResponse response, Model model){
 
@@ -104,42 +104,31 @@ public class CommunityController {
         List<CommunityComment> comments = community.getComments();
 
 
-        model.addAttribute("commentWriter",sessionMember.getMemberId());
+
+
         try{
             if(sessionMember !=null&&sessionMember.getMemberId().equals(writer)) {
-                sendCommunity(communityIdx,model,community,comments);
+                sendCommunity(communityIdx,model,community,comments,sessionMember);
                 model.addAttribute("writer", writer);
             }else{
-                sendCommunity(communityIdx,model,community,comments);
+                sendCommunity(communityIdx,model,community,comments,sessionMember);
             }
             return "community/read";
         } catch (NullPointerException e){
-            sendCommunity(communityIdx,model,community,comments);
+            sendCommunity(communityIdx,model,community,comments,sessionMember);
             return "community/read";
         }
 
 
     }
 
-    private void sendCommunity(int communityIdx, Model model, Community community, List<CommunityComment> communityComments) {
+    private void sendCommunity(int communityIdx, Model model, Community community, List<CommunityComment> communityComments,@LoginUser SessionMember sessionMember) {
         model.addAttribute("comments", communityComments);
         model.addAttribute("community", community);
         model.addAttribute("communityIdx", communityIdx);
+        model.addAttribute("sessionMember", sessionMember.getMemberId());
     }
 
-    @PostMapping("/login/comment/{communityIdx}")
-    //댓글 저장
-    public String comment(@PathVariable int communityIdx, @LoginUser SessionMember sessionMember,
-                          @ModelAttribute("comment") CommunityComment communityComment, Model model){
-
-
-        communityCommentService.save(sessionMember.getMemberId(), communityIdx, communityComment);
-
-
-        return "redirect:/community/{communityIdx}";
-
-
-    }
 
 
     @GetMapping("/edit/{communityIdx}")      // 게시글 수정을 위한 form 페이지(이전 값 불러옴)
@@ -169,10 +158,21 @@ public class CommunityController {
 
     //마이페이지에서 내가 작성 게판목록 검색컨틀로러
     @PostMapping("myWriteSearch")
-    public String myWriteSearch(@RequestParam String keyword,@LoginUser SessionMember sessionMember, Model model){
+    public String myWriteSearch(@RequestParam String keyword,@LoginUser SessionMember sessionMember, Model model,@PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
+            Pageable pageable){
 
-        List<Community> myWriteSearch = communityService.myWriteSearch(sessionMember.getMemberId(), keyword);
+        Page<Community> myWriteSearch = communityService.myWriteSearch(sessionMember.getMemberId(), keyword,pageable);
+        //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
+        int nowPage = myWriteSearch.getPageable().getPageNumber() + 1;
+        //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
+        int startPage =Math.max(nowPage-4,1) ;
+        //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
+        //그렇기에 getTotalpage를  min으로설정)
+        int endPage = Math.min(nowPage + 5, myWriteSearch.getTotalPages());
 
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         model.addAttribute("myWriteSearch", myWriteSearch);
 
 
