@@ -41,29 +41,29 @@ public class MainController {
         cookie.setMaxAge(60*60*24*365); //쿠키 유효시간 설정
         response.addCookie(cookie);
 
-        Page<Community> data = mainCommunity(pageable);
-        Page<Participation> data2 = mainParticipation(pageable);
+        Page<Community> community = mainCommunity(pageable);
+        Page<Participation> participation = mainParticipation(pageable);
 
 
-        model.addAttribute("data",data);
-        model.addAttribute("data2", data2);
+        model.addAttribute("community",community);
+        model.addAttribute("participation", participation);
 
         return "index";
 
     }
 
 
-    public Page<Community> mainCommunity(@PageableDefault(page = 0, size=4, sort="communityid", direction = Sort.Direction.DESC)
+    public Page<Community> mainCommunity(@PageableDefault(page = 0, size=4, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Community> data =communityService.allContentList(pageable);
+        Page<Community> community =communityService.allContentList(pageable);
 
-        return data;
+        return community;
     }
 
     public Page<Participation> mainParticipation(@PageableDefault(page = 0, size=4, sort="participationIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Participation> data2 = participationService.allContentList(pageable);
-        return data2;
+        Page<Participation> participation = participationService.allContentList(pageable);
+        return participation;
     }
 
 }
