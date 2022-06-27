@@ -12,14 +12,19 @@ import javax.persistence.*;
 public class ParticipationComment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer commentIdx;
 
     private String commentText;
 
-    private String commentWriter;
+    @ManyToOne
+    @JoinColumn(name = "member_idx")
+    private Member member; // 작성자
 
-    private int commentNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "participation_idx")
+    private Participation participation;
 
     public void modifyComment(String commentText) {this.commentText = commentText;}
 
