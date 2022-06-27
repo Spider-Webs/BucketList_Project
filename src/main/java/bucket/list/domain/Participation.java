@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,6 +33,9 @@ public class Participation {
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private Integer participationCount;
+
+    @OneToMany(mappedBy = "participation", cascade = CascadeType.REMOVE)
+    private List<ParticipationComment> comments = new ArrayList<>();
 
     @PrePersist
     public void localAboutDate(){
