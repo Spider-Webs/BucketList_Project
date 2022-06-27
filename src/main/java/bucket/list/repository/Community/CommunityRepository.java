@@ -5,6 +5,8 @@ package bucket.list.repository.Community;
 
 import bucket.list.domain.Community;
 import bucket.list.domain.Participation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +20,7 @@ public interface CommunityRepository extends JpaRepository<Community,Object> {
 
     //작성자의 게시글 목록가져오기
     @Query(value = "select c from Community c where c.communityWriter = :communityWriter")
-    List<Community> findAllWriteList(String communityWriter);
+    Page<Community> findAllWriteList(String communityWriter, Pageable pageable);
 
     //특정 게시글에대한 작성자가 누구인지 확인하는 쿼리
     @Query(value = "select c.communityWriter from Community c where c.communityIdx = :communityIdx")
@@ -30,7 +32,7 @@ public interface CommunityRepository extends JpaRepository<Community,Object> {
 
     //마이페이지 조회쿼리
     @Query("select c from Community c where c.communityWriter = :communityWriter and c.communitySubject like %:keyword% order by c.communityIdx desc")
-    List<Community> findByCommunityWriterAndCommunitySubjectContaining(String communityWriter, String keyword);
+    Page<Community> findByCommunityWriterAndCommunitySubjectContaining(String communityWriter, String keyword,Pageable pageable);
 
 
 
