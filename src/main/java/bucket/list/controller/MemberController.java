@@ -12,6 +12,7 @@ import bucket.list.service.Participation.ParticipationService;
 
 import bucket.list.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +31,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/members")
 public class MemberController {
-
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
@@ -56,7 +57,6 @@ public class MemberController {
         if(bindingResult.hasErrors()){
             return "members/create";
         }
-
             try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
@@ -66,7 +66,6 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/create";
         }
-
 
         return "members/create_success";
     }
@@ -93,12 +92,10 @@ public class MemberController {
     public String sendMail(@RequestParam String memberEmail,Model model){
 
         try {
-
             memberService.equalEmail(memberEmail);
             MailDto mailDto = memberService.createOrChangePassword(memberEmail);
             memberService.mailSend(mailDto);
         }catch (IllegalStateException e){
-
             model.addAttribute("errorMessage", e.getMessage());
             return "members/findPassword";
         }
@@ -142,24 +139,21 @@ public class MemberController {
         model.addAttribute("community",community);
         model.addAttribute("member",sessionMember);
 
-            return "members/mypage";
-
+        return "members/mypage";
 
     }
 
     @GetMapping("/modifyPassword")
     public String changePasswordForm(Model model){
 
-
         model.addAttribute("updatePasswordDto", new UpdatePasswordDto());
-
 
         return "members/modifyPassword";
     }
 
     @PostMapping("/modifyPassword")
-    public String updatePassword(@Valid @ModelAttribute UpdatePasswordDto updatePasswordDto, BindingResult bindingResult,
-                                 @LoginUser SessionMember sessionMember,Model model){
+    public String updatePassword(@Validated @ModelAttribute UpdatePasswordDto updatePasswordDto, BindingResult bindingResult,
+                                 @LoginUser SessionMember sessionMember, Model model){
         
         if (bindingResult.hasErrors()){
             return "members/modifyPassword";
@@ -167,24 +161,22 @@ public class MemberController {
 
         String memberEmail = sessionMember.getMemberEmail();
         try {
-            System.out.println("컨틀롤러 맞은거출력");
+
             memberService.modifyPassword(updatePasswordDto, memberEmail);
         }catch (IllegalStateException e){
-            System.out.println("컨틀롤러 틀리린거출력");
+
             model.addAttribute("errorMessage", e.getMessage());
             return "members/modifyPassword";
         }
 
         return "members/modifyPasswordSuccess";
-
     }
 
-
     //비밀번호 일치여부 initbinder
-    @InitBinder("UpdatePasswordDto")
+    @InitBinder("updatePasswordDto")
     public void initBinder(WebDataBinder webDataBinder){
 
-
+        log.info("webDataBinder={}, target={}", webDataBinder, webDataBinder.getTarget());
         webDataBinder.addValidators(validator);
     }
 }
