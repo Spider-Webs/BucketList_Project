@@ -145,6 +145,8 @@
 <br><br><br><br>
 
 
+ERD 
+https://www.erdcloud.com/d/LRK5yNTBek6te6mbS
 
 DB - 엑셀
 https://docs.google.com/spreadsheets/d/15F4yysVkMPwydwkIkiJJAresrJctdSHgpmIC8dA3-qY/edit#gid=0
