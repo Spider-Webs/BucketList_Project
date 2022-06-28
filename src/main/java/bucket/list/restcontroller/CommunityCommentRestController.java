@@ -26,7 +26,6 @@ public class CommunityCommentRestController {
     @PutMapping({"/community/{communityIdx}/comments/{commentIdx}"})
     public ResponseEntity modify(@PathVariable int commentIdx, @RequestBody CommunityComment communityComment){
 
-        System.out.println("글자쓴거"+communityComment.getCommentText());
         communityCommentService.modify(commentIdx,communityComment);
         return ResponseEntity.ok(commentIdx);
     }

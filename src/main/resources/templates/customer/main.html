@@ -33,7 +33,7 @@
                 <tr th:each="item : ${customer_items}">
                     <td class="text-center d-none d-md-table-cell" th:text="${item.customerIdx}">게시글번호</td>
                     <td><a th:href="@{|/customer/${item.customerIdx}/read|}" th:text="${item.customerSubject}"> 제목 </a></td>
-                    <td class="text-center d-none d-md-table-cell" th:text="${item.customerWriter}">홍길동</td>
+                    <td class="text-center d-none d-md-table-cell" th:text="${item.member.memberId}">홍길동</td>
                     <td class="text-center d-none d-md-table-cell" th:text="${item.customerDate}">작성일</td>
                 </tr>
                 </tbody>

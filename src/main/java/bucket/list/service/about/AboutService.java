@@ -1,7 +1,11 @@
 package bucket.list.service.about;
 
 import bucket.list.domain.About;
+import bucket.list.domain.Member;
+import bucket.list.repository.Member.MemberRepository;
 import bucket.list.repository.about.AboutRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,7 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
+@Slf4j
+@RequiredArgsConstructor
 @Transactional
 @Service
 public class AboutService {
@@ -22,44 +29,41 @@ public class AboutService {
     private String fileDir;
 
     private final AboutRepository aboutRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    public AboutService(AboutRepository aboutRepository) {
-        this.aboutRepository = aboutRepository;
-    }
 
     //글작성
     @CacheEvict(value = "allContentList", allEntries = true)
-    public void save(About about, MultipartFile file) throws IOException {
-
-//        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-
+    public void save(About about, MultipartFile file,String memberId) throws IOException {
+        
         boolean noneFIle = file.isEmpty();
 
         if(!noneFIle) {
-
-            String path = fileDir;
-
-            UUID uuid = UUID.randomUUID();
-
-            String fileName = uuid + "_" + file.getOriginalFilename();
-
-            File saveFile = new File(path, fileName);
-            file.transferTo(saveFile);
-
-            about.setAbout_file(fileName);
-
-
+            String fileName = uploadFile(file);
+            about.setAboutFile(fileName);
+            memberInsert(about, memberId);
             aboutRepository.save(about);
-
-
         }else{
-            about.setAbout_file(null);
+            memberInsert(about, memberId);
+            about.setAboutFile(null);
             aboutRepository.save(about);
-
         }
+        
+    }
 
+    private void memberInsert(About about, String memberId) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
+        about.setMember(byMemberId.get());
+    }
 
+    //파일 업로드 메서드
+    private String uploadFile(MultipartFile file) throws IOException {
+        String path = fileDir;
+        UUID uuid = UUID.randomUUID();
+        String fileName = uuid + "_" + file.getOriginalFilename();
+        File saveFile = new File(path, fileName);
+        file.transferTo(saveFile);
+        return fileName;
     }
 
     //게시글리스트 처리, 최신글 정렬
@@ -72,26 +76,17 @@ public class AboutService {
     }
 
     //특정게시글 보는 메서드
-    public About oneContentList(Integer aboutnumber) {
+    public About oneContentList(Integer aboutNumber) {
 
-//        File file = new File()
-
-        About about = aboutRepository.findById(aboutnumber).get();
+        About about = aboutRepository.findById(aboutNumber).get();
 
         return about;
     }
 
-
     @CacheEvict(value = "allContentList", allEntries = true)
     //글삭제메서드
-    public void deleteContent(Integer aboutnumber){
-        aboutRepository.deleteById(aboutnumber);
-
-    }
-
-
-    public String selectIdSQL(int aboutnumber){
-        return aboutRepository.selectIdSQL(aboutnumber);
+    public void deleteContent(Integer aboutNumber){
+        aboutRepository.deleteById(aboutNumber);
     }
 
 

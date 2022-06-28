@@ -28,7 +28,6 @@ public class ParticipationCommentRestController {
     @PutMapping({"/participation/{participationIdx}/comments/{commentIdx}"})
     public ResponseEntity modify(@PathVariable int commentIdx, @RequestBody ParticipationComment participationComment){
 
-
         participationCommentService.modify(commentIdx,participationComment);
         return ResponseEntity.ok(commentIdx);
     }

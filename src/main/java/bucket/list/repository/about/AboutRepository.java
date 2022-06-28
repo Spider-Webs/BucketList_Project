@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface AboutRepository extends JpaRepository<About,Integer> {
 
-    @Query(value = "select about_writer from about where aboutnumber=?", nativeQuery = true)
-    String selectIdSQL(int aboutnumber);
+
 }

@@ -35,14 +35,14 @@
                         </div>
                         <div class="form-group">
                             <label for="customerPassword">비밀번호</label>
-                            <input type="password" id="customerPassword" name="customerPassword" class="form-control" />
+                            <input type="password" id="customerPassword" name="customerPassword" class="form-control" th:value=${customer.customerPassword} />
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio1" value="t" checked>
+                            <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio1" value="t" disabled>
                             <label class="form-check-label" for="inlineRadio1">공개글</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio2" value="f" >
+                            <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio2" value="f" checked>
                             <label class="form-check-label" for="inlineRadio2">비공개글</label>
                         </div>
 
