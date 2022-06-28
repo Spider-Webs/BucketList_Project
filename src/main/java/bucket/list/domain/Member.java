@@ -27,23 +27,18 @@ public class Member implements Serializable {
     @Column(name="member_id")
     private String memberId;
 
-
     @Column(name="member_name")
     private String memberName;
 
     @Column(name="member_password")
     private String memberPassword;
 
-
     @Column(name="member_email")
     private String memberEmail;
-
     @Column(name = "member_phone")
     private String memberPhone;
-
     @Embedded
     private AddressEmbed addressEmbed;
-
     @Column
     //추가
     private String picture;

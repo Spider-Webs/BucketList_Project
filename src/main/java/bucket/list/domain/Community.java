@@ -25,16 +25,16 @@ public class Community {
     private String communityWriter;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private Integer communityCount;
+    private Integer communityCount;//조회수 확인하기위한 변수 기본값은 0, null허용불가 설정
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)//REMOVE 설정이유는 게시글 삭제시 해당 게시글에대한 댓글도 같이 삭제시키기위함
+    @OrderBy(value = "comment_idx DESC" )//최신 댓글부터 보기위해, 기본키 내림차순으로 정렬
     private List<CommunityComment> comments = new ArrayList<>();
-
 
     @PrePersist
     public void localAboutDate(){
         this.communityDate = LocalDate.now();
-    }
+    }//insert 메서드 호출전 DATE변수에 오늘날짜 대입
 
 
 }

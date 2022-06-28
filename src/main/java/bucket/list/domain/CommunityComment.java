@@ -20,7 +20,6 @@ public class CommunityComment {
     @JoinColumn(name = "member_idx")
     private Member member; // 작성자
 
-
     @ManyToOne
     @JoinColumn(name = "community_idx")
     private Community community;
