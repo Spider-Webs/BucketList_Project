@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout() //로그아웃
                 .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))//로그아웃 url
-                .logoutSuccessUrl("/"); //성공시 이동할 url
+                .logoutSuccessUrl("/members/login"); //성공시 이동할 url
 
         http.authorizeRequests()
                 .antMatchers("/","/about/*/read","/about","/participation","/participation/*"
