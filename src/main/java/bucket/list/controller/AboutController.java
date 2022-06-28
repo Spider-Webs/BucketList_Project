@@ -3,9 +3,13 @@ package bucket.list.controller;
 
 import bucket.list.config.LoginUser;
 import bucket.list.domain.About;
+import bucket.list.domain.Member;
 import bucket.list.dto.SecurityMember;
 import bucket.list.dto.SessionMember;
+import bucket.list.repository.Member.MemberRepository;
 import bucket.list.service.about.AboutService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,87 +22,67 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
+@Slf4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/about")
 public class AboutController {
 
-
     private final AboutService aboutService;
-
-    @Autowired
-    public AboutController(AboutService aboutService) {
-        this.aboutService = aboutService;
-    }
-
 
     //공지사항 메인페이지 메서드
     @GetMapping()
     //페이징구현하기, Pageable 사용하기 page = 기본페이지, size 한페이지 게시글수,sort 정렬 기준 잡을 변수, direction 오름차순인지 내림차순인지
     public String about( Model model,
-                        @PageableDefault(page = 0, size = 10, sort = "aboutnumber",direction = Sort.Direction.DESC) Pageable pageable,
-                        @LoginUser SessionMember member) {
+                         @PageableDefault(page = 0, size = 10, sort = "aboutNumber",direction = Sort.Direction.DESC) Pageable pageable,
+                         @LoginUser SessionMember member) {
 
-        Page<About> about_items = aboutService.allContentList(pageable);
+        Page<About> abouts = aboutService.allContentList(pageable);
 
-
-       if(member !=null){
-            model.addAttribute("member", member);
-            getPageNumber(model, about_items);
-            return "about/about";
-        }
-        else {
-            getPageNumber(model,about_items);
-            return "about/about";
-        }
-
+        model.addAttribute("member", member);
+        getPageNumber(model, abouts);
+        return "about/main";
 
     }
 
-    private void getPageNumber(Model model, Page<About> about_items) {
+    private void getPageNumber(Model model, Page<About> abouts) {
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
-        int nowPage = about_items.getPageable().getPageNumber() + 1;
+        int nowPage = abouts.getPageable().getPageNumber() + 1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
         int startPage = Math.max(nowPage - 4, 1);
         //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
         //그렇기에 getTotalpage를  min으로설정)
-        int endPage = Math.min(nowPage + 5, about_items.getTotalPages());
+        int endPage = Math.min(nowPage + 5, abouts.getTotalPages());
 
-        model.addAttribute("about_items", about_items);
+        model.addAttribute("abouts", abouts);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
     }
 
-
     //글쓰기페이지
     @GetMapping("/write")
     public String writeForm( ){
 
-        System.out.println("출력되나");
         return "about/write";
     }
 
 
     @PostMapping("/write")
-    public String write(@LoginUser SessionMember sessionMember, @ModelAttribute("about")About about, MultipartFile file) throws IOException {
+    public String write(@ModelAttribute("about")About about, MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
 
-
-        if(sessionMember != null){
-            about.setAbout_writer(sessionMember.getMemberId());
-            aboutService.save(about,file);
-        }
+        aboutService.save(about,file,sessionMember.getMemberId());
 
         return "redirect:/about";
 
     }
-    @GetMapping("/{aboutnumber}/read")
+    @GetMapping("/{aboutNumber}/read")
     //글읽는 페이지 메서드
-    public String read(@LoginUser SessionMember sessionMember,@PathVariable Integer aboutnumber, Model model  ){
+    public String read(@LoginUser SessionMember sessionMember,@PathVariable Integer aboutNumber, Model model  ){
 
-
-
-        About about = aboutService.oneContentList(aboutnumber);
+        About about = aboutService.oneContentList(aboutNumber);
 
         if(sessionMember != null){
             model.addAttribute("about",about);
@@ -111,28 +95,27 @@ public class AboutController {
 
     }
 
-
-    @GetMapping("/edit/{aboutnumber}")
+    @GetMapping("/edit/{aboutNumber}")
     //게시글 수정 view 보여주고 전달
-    public String editForm(@PathVariable int aboutnumber, Model model){
-        About about = aboutService.oneContentList(aboutnumber);
+    public String editForm(@PathVariable int aboutNumber, Model model){
+        About about = aboutService.oneContentList(aboutNumber);
         model.addAttribute("about", about);
-        model.addAttribute("number", aboutnumber);
+        model.addAttribute("number", aboutNumber);
         return "about/edit";
     }
 
-    @PostMapping("/edit/{aboutnumber}")
+    @PostMapping("/edit/{aboutNumber}")
     //실제 게시글수정, 파일이미지 업로드
-    public String edit(@ModelAttribute("aboutnumber") About about,@PathVariable int aboutnumber,MultipartFile file) throws IOException {
-        aboutService.save(about,file);
-        return "redirect:/about/{aboutnumber}/read";
+    public String edit(@ModelAttribute("aboutNumber") About about,@PathVariable int aboutNumber,MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
+        aboutService.save(about,file,sessionMember.getMemberId());
+        return "redirect:/about/{aboutNumber}/read";
     }
 
-    @GetMapping("/delete/{aboutnumber}")
+    @GetMapping("/delete/{aboutNumber}")
     //게시글 삭제
-    public String delete(@PathVariable int aboutnumber){
+    public String delete(@PathVariable int aboutNumber){
 
-        aboutService.deleteContent(aboutnumber);
+        aboutService.deleteContent(aboutNumber);
 
         return "redirect:/about";
     }
