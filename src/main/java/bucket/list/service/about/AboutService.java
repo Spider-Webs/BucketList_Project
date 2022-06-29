@@ -2,6 +2,7 @@ package bucket.list.service.about;
 
 import bucket.list.domain.About;
 import bucket.list.domain.Member;
+import bucket.list.dto.AboutDto;
 import bucket.list.repository.Member.MemberRepository;
 import bucket.list.repository.about.AboutRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,29 +32,32 @@ public class AboutService {
     private final AboutRepository aboutRepository;
     private final MemberRepository memberRepository;
 
-
     //글작성
     @CacheEvict(value = "allContentList", allEntries = true)
-    public void save(About about, MultipartFile file,String memberId) throws IOException {
+    public void save(AboutDto dto, MultipartFile file, String memberId) throws IOException {
         
         boolean noneFIle = file.isEmpty();
 
         if(!noneFIle) {
+            log.info("text:{}",dto.getAboutText());
             String fileName = uploadFile(file);
-            about.setAboutFile(fileName);
-            memberInsert(about, memberId);
-            aboutRepository.save(about);
-        }else{
-            memberInsert(about, memberId);
-            about.setAboutFile(null);
+            dto.setAboutFile(fileName);
+            memberInsert(dto, memberId);
+            About about = dto.toEntity();
             aboutRepository.save(about);
         }
-        
+        else{
+            memberInsert(dto, memberId);
+            dto.setAboutFile(null);
+            About about = dto.toEntity();
+            aboutRepository.save(about);
+        }
+
     }
 
-    private void memberInsert(About about, String memberId) {
+    private void memberInsert(AboutDto dto, String memberId) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
-        about.setMember(byMemberId.get());
+        dto.setMember(byMemberId.get());
     }
 
     //파일 업로드 메서드
