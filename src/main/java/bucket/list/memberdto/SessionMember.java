@@ -1,7 +1,6 @@
 package bucket.list.dto;
 
 import bucket.list.domain.Member;
-import bucket.list.domain.Role;
 import lombok.Getter;
 
 import java.io.Serializable;
