@@ -23,7 +23,7 @@
                     <div class="d-flex align-items-center mt-lg-5 mb-4">
                         <div class="ms-3">
                             <!-- 작성자 -->
-                            <div class="fw-bold" th:text="|작성자 : ${community.communityWriter}|">작성자</div>
+                            <div class="fw-bold" th:text="|작성자 : ${community.member.memberId}|">작성자</div>
                             <!-- 메뉴 목록이름 -->
                             <div class="text-muted">양동이 살펴보기</div>
                             <!-- 조회수 -->
@@ -85,7 +85,8 @@
                                                         <div th:text="${comments.commentText}"> 답글내용</div>
 
                                                         <td>
-                                                            <button  th:if=${comments.member.memberId==sessionMember} type="button"  class="btn btn-light" data-bs-toggle="collapse" data-bs-target="#collapseExample12"  aria-expanded="false" aria-controls="collapseExample">
+                                                            <button  th:if=${comments.member.memberId==sessionMember} type="button"  class="btn btn-light" data-bs-toggle="collapse"
+                                                                     th:attr="data-bs-target='#collapseExample'+${comments.commentIdx}"  aria-expanded="false" aria-controls="collapseExample">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                      height="16" fill="currentColor"
                                                                      class="bi bi-pencil" viewBox="0 0 16 16">
@@ -132,13 +133,13 @@
                         </div>
                     </section>
                     <br>
-                    <button type="button" th:if="${writer != null}" class="btn btn-success"
+                    <button type="button" th:if="${community.member.memberId == sessionMember}" class="btn btn-success"
                             th:onclick="|location.href='@{/community/edit/{communityIdx}/(communityIdx=${community.communityIdx})}'|">
                         수정하기
                     </button>
                     <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/community}'|">목록으로
                     </button>
-                    <button type="button" th:if="${writer != null}" class="btn btn-danger"
+                    <button type="button" th:if="${community.member.memberId == sessionMember}" class="btn btn-danger"
                             th:onclick="|location.href='@{/community/delete/{communityIdx}/(communityIdx=${community.communityIdx})}'|">
                         삭제하기
                     </button>
@@ -175,7 +176,7 @@
                      $.ajax({
                          type: 'POST',
                          url: '/api/community/' + data.communityIdx + '/comments',
-                        dataType: 'JSON',
+<!--                        dataType: 'JSON',-->
                         contentType: 'application/json; charset=utf-8',
                         data: JSON.stringify(data)
                       }).done(function () {

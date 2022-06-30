@@ -35,6 +35,7 @@
               <label for="participationSubject">제목</label>
               <input type="text" id="participationSubject" name="participationSubject" class="form-control" th:value="${participation.participationSubject}"/>
             </div>
+            <input type="hidden" id="participationCount" name="participationCount" th:value="${participation.participationCount}">
             <div class="form-group">
               <label for="participationTag">태그</label>
               <input type="text" id="participationTag" name="participationTag" class="form-control" th:value="${participation.participationTag}"/>
