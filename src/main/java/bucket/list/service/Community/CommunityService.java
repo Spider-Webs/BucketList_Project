@@ -2,10 +2,14 @@ package bucket.list.service.Community;
 
 import bucket.list.domain.Community;
 
-import bucket.list.domain.Participation;
+import bucket.list.domain.Member;
+import bucket.list.communitydto.CommunityRequestDto;
+import bucket.list.communitydto.CommunityResponseDto;
 import bucket.list.repository.Community.CommunityRepository;
+import bucket.list.repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,53 +19,55 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Service     //spring bean 사용하여 따로 설정했으므로 삭제해야함
+@Service
 public class CommunityService {
 
     @Value("${file.dir}")
     private String fileDir;
 
     private final CommunityRepository communityRepository;
+    private final MemberRepository memberRepository;
 
-
-
-    public void createCommunity(Community community, MultipartFile file) throws IOException {             // 작성
-
-        //파일의 저장경로를 위한 경로설정
+    public void save(CommunityRequestDto communityRequestDto, MultipartFile file, String memberId) throws IOException {             // 작성
         boolean noneFIle = file.isEmpty();
-
-        if (!noneFIle) {
-            String path = fileDir;
-
-            //이미지파일 중복을 방지하기위해 uuid설정
-            UUID uuid = UUID.randomUUID();
-
-            //filename의 uuid + 파일명
-            String fileName = uuid + "_" + file.getOriginalFilename();
-
-
-            File saveFile = new File(path, fileName);
-
-            //파일전송
-            file.transferTo(saveFile);
-
-            community.setCommunityFile(fileName);
-
-            communityRepository.save(community);
+        //파일의 저장경로를 위한 경로설정
+        if(!noneFIle) {
+            String fileName = uploadFile(file);
+            communityRequestDto.setCommunityFile(fileName);
         } else {
-            community.setCommunityFile(null);
-            communityRepository.save(community);
+            communityRequestDto.setCommunityFile(null);
         }
-
+        memberInsert(communityRequestDto, memberId);
+        Community community = communityRequestDto.toEntity();
+        communityRepository.save(community);
     }
 
-    public Community oneContentList(int communityIdx){       // 해당 게시물 출력
-        return communityRepository.findById(communityIdx).get();
+    private String uploadFile(MultipartFile file) throws IOException {
+        String path = fileDir; //파일을 저장할 경로 지정
+        UUID uuid = UUID.randomUUID();// 파일명 중복을 방지하기위해 UUID 객체사용
+        String fileName = uuid + "_" + file.getOriginalFilename(); //file 이름설정
+        File saveFile = new File(path, fileName);
+        file.transferTo(saveFile);
+        return fileName;
+    }
+
+    private void memberInsert(CommunityRequestDto communityRequestDto, String memberId) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
+        log.info("byMemberId:{}",byMemberId.get().getMemberId());
+        communityRequestDto.setMember(byMemberId.get());
+    }
+
+
+    public CommunityResponseDto oneContentList(int communityIdx){
+
+        Community community = communityRepository.findById(communityIdx).get();// 해당 게시물 출력
+
+        return new CommunityResponseDto(community);
     }
 
     public Page<Community> allContentList(Pageable pageable){      // 전체 게시물 출력
@@ -70,13 +76,8 @@ public class CommunityService {
     }
 
 
-
     public Page<Community> findAllWriteList(String communityWriter,Pageable pageable){       // 아이디를 통해 나머지 정보 구하기
         return communityRepository.findAllWriteList(communityWriter,pageable);
-    }
-
-    public String findWriter(int communityIdx){
-        return communityRepository.findWriter(communityIdx);
     }
 
     public void communityDelete(int communityIdx){           // 게시물 삭제
@@ -84,14 +85,11 @@ public class CommunityService {
     }
 
     public int updateCount(int communityIdx){
-
-
         return  communityRepository.updateCount(communityIdx);
-
     }
     //마이페이지에서 내가작성한 글 검색하기
-    public Page<Community> myWriteSearch(String communityWriter, String keyword,Pageable pageable){
-        Page<Community> myWriteSearch = communityRepository.findByCommunityWriterAndCommunitySubjectContaining(communityWriter, keyword,pageable);
+    public Page<Community> myWriteSearch(String memberId, String keyword,Pageable pageable){
+        Page<Community> myWriteSearch = communityRepository.findByCommunityWriterAndCommunitySubjectContaining(memberId, keyword,pageable);
 
         return myWriteSearch;
 

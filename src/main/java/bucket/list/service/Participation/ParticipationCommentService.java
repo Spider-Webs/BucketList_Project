@@ -1,6 +1,7 @@
 package bucket.list.service.Participation;
 
 import bucket.list.domain.*;
+import bucket.list.participationdto.ParticipationCommentRequestDto;
 import bucket.list.repository.Member.MemberRepository;
 import bucket.list.repository.Participation.ParticipationCommentRepository;
 import bucket.list.repository.Participation.ParticipationRepository;
@@ -20,10 +21,9 @@ public class ParticipationCommentService {
     private final ParticipationRepository participationRepository;
     private final MemberRepository memberRepository;
 
-
     //댓글 저장
     @Transactional
-    public int save(String memberId, int participationIdx, ParticipationComment participationComment){
+    public Integer save(String memberId, int participationIdx, ParticipationCommentRequestDto participationComment){
 
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
@@ -33,14 +33,15 @@ public class ParticipationCommentService {
         participationComment.setMember(member.get());
         participationComment.setParticipation(participation);
 
-        participationCommentRepository.save(participationComment);
+        ParticipationComment comment = participationComment.toEntity();
+        participationCommentRepository.save(comment);
 
         return participationComment.getCommentIdx();
     }
 
     //댓글 수정
     @Transactional
-    public void modify(int participationIdx, ParticipationComment participationComment){
+    public void modify(int participationIdx, ParticipationCommentRequestDto participationComment){
         ParticipationComment comment = participationCommentRepository.findById(participationIdx).orElseThrow(() ->
                 new IllegalArgumentException("해당 댓글이 더 이상 존재하지 않습니다"));
 

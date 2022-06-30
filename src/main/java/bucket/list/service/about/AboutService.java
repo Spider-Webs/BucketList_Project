@@ -42,17 +42,13 @@ public class AboutService {
             log.info("text:{}",dto.getAboutText());
             String fileName = uploadFile(file);
             dto.setAboutFile(fileName);
-            memberInsert(dto, memberId);
-            About about = dto.toEntity();
-            aboutRepository.save(about);
         }
         else{
-            memberInsert(dto, memberId);
             dto.setAboutFile(null);
-            About about = dto.toEntity();
-            aboutRepository.save(about);
         }
-
+        memberInsert(dto, memberId);
+        About about = dto.toEntity();
+        aboutRepository.save(about);
     }
 
     private void memberInsert(AboutDto dto, String memberId) {

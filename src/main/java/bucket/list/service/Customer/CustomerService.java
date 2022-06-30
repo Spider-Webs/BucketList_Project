@@ -3,6 +3,7 @@ package bucket.list.service.Customer;
 import bucket.list.domain.About;
 import bucket.list.domain.Customer;
 import bucket.list.domain.Member;
+import bucket.list.dto.CustomerDto;
 import bucket.list.repository.Customer.CustomerRepository;
 
 import bucket.list.repository.Member.MemberRepository;
@@ -32,25 +33,24 @@ public class CustomerService {
     private final MemberRepository memberRepository;
 
     //고객센터 게시글저장
-    public void save(Customer customer, MultipartFile file,String memberId) throws IOException {
+    public void save(CustomerDto customerDto, MultipartFile file, String memberId) throws IOException {
 
         boolean noneFIle = file.isEmpty();
 
         if(!noneFIle) {
             String fileName = uploadFile(file);
-            customer.setCustomerFile(fileName);
-            memberInsert(customer, memberId);
-            customerRepository.save(customer);
+            customerDto.setCustomerFile(fileName);
         }else{
-            customer.setCustomerFile(null);
-            memberInsert(customer, memberId);
-            customerRepository.save(customer);
+            customerDto.setCustomerFile(null);
         }
+        memberInsert(customerDto, memberId);
+        Customer customer = customerDto.toEntity();
+        customerRepository.save(customer);
     }
 
-    private void memberInsert(Customer customer, String memberId) {
+    private void memberInsert(CustomerDto customerDto, String memberId) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
-        customer.setMember(byMemberId.get());
+        customerDto.setMember(byMemberId.get());
     }
 
     private String uploadFile(MultipartFile file) throws IOException {
