@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AboutDto {
@@ -17,11 +18,9 @@ public class AboutDto {
     private String aboutSubject;
     private String aboutText;
     private Member member;
-    private LocalDate aboutDate;
     private String aboutFile;
 
     /*Dto -> toEntity*/
-    @Builder
     public About toEntity(){
         About about = About.builder()
                 .aboutNumber(aboutNumber)
@@ -34,10 +33,5 @@ public class AboutDto {
         return about;
     }
 
-    public void fileExist(MultipartFile file){
-        if(file.isEmpty()){
-//            aboutFile
-        }
-    }
 
 }
