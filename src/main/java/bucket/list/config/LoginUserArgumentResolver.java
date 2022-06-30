@@ -1,6 +1,6 @@
 package bucket.list.config;
 
-import bucket.list.dto.SessionMember;
+import bucket.list.memberdto.SessionMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
