@@ -13,9 +13,4 @@ import java.util.List;
 public interface CommunityCommentRepository extends JpaRepository<CommunityComment,Integer> {
 
 
-
-//    댓글작성자
-//    @Query("select c.commentWriter from CommunityComment c where c.commentIdx = :commentIdx")
-//    String findCommentWriter(@Param("commentIdx") int commentIdx);
-
 }
