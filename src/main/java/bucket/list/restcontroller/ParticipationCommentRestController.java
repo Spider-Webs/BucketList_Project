@@ -1,10 +1,9 @@
 package bucket.list.restcontroller;
 
 import bucket.list.config.LoginUser;
-import bucket.list.domain.CommunityComment;
 import bucket.list.domain.ParticipationComment;
-import bucket.list.dto.SessionMember;
-import bucket.list.service.Community.CommunityCommentService;
+import bucket.list.memberdto.SessionMember;
+import bucket.list.participationdto.ParticipationCommentRequestDto;
 import bucket.list.service.Participation.ParticipationCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +18,14 @@ public class ParticipationCommentRestController {
 
     //댓글 저장
     @PostMapping("/participation/{participationIdx}/comments")
-    public ResponseEntity commentSave(@PathVariable int participationIdx, @RequestBody ParticipationComment participationComment,
+    public ResponseEntity commentSave(@PathVariable int participationIdx, @RequestBody ParticipationCommentRequestDto participationComment,
                                       @LoginUser SessionMember sessionMember){
         return ResponseEntity.ok(participationCommentService.save(sessionMember.getMemberId(), participationIdx, participationComment));
     }
 
     //수정
     @PutMapping({"/participation/{participationIdx}/comments/{commentIdx}"})
-    public ResponseEntity modify(@PathVariable int commentIdx, @RequestBody ParticipationComment participationComment){
+    public ResponseEntity modify(@PathVariable int commentIdx, @RequestBody ParticipationCommentRequestDto participationComment){
 
         participationCommentService.modify(commentIdx,participationComment);
         return ResponseEntity.ok(commentIdx);
