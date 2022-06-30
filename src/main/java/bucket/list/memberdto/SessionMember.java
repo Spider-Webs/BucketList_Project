@@ -1,4 +1,4 @@
-package bucket.list.dto;
+package bucket.list.memberdto;
 
 import bucket.list.domain.Member;
 import lombok.Getter;

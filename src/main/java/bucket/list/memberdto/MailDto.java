@@ -1,4 +1,4 @@
-package bucket.list.dto;
+package bucket.list.memberdto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
