@@ -1,6 +1,7 @@
 package bucket.list.repository.Participation;
 
 import bucket.list.domain.Community;
+import bucket.list.domain.Member;
 import bucket.list.domain.Participation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,20 +22,17 @@ public interface ParticipationRepository extends JpaRepository<Participation,Int
     int updateCount(int participationIdx);
 
     //작성자가 작성한 게시글 가져오기 쿼리
-    @Query("select p from Participation p where p.participationWriter = :participationWriter")
-    Page<Participation> findAllWriteList(@Param("participationWriter") String participationWriter, Pageable pageable);
+    @Query("select p from Participation p where p.member.memberId = :memberId")
+    Page<Participation> findByMember(String memberId, Pageable pageable);
 
-    //해당게시글에대한 작성자 쿼리
-    @Query("select p.participationWriter from Participation p where p.participationIdx = :participationIdx")
-    String findWriter(@Param("participationIdx") int participationIdx);
 
     //메인페이지 조회쿼리
     @Query("select p from Participation p where  p.participationTag like %:keyword%  order by p.participationIdx desc")
     List<Participation> findByParticipationTagContaining(String keyword);
 
     //마이페이지 조회쿼리
-    @Query("select p from Participation p where p.participationWriter = :participationWriter and p.participationSubject like %:keyword% order by p.participationIdx desc")
-    Page<Participation> findByParticipationWriterAndParticipationSubjectContaining(String participationWriter,String keyword,Pageable pageable);
+    @Query("select p from Participation p where p.member.memberId = :memberId and p.participationSubject like %:keyword% order by p.participationIdx desc")
+    Page<Participation> findByParticipationWriterAndParticipationSubjectContaining(String memberId,String keyword,Pageable pageable);
 
 
 }
