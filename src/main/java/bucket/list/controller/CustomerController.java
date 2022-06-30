@@ -3,11 +3,12 @@ package bucket.list.controller;
 
 import bucket.list.config.LoginUser;
 import bucket.list.domain.Customer;
-import bucket.list.dto.SessionMember;
+import bucket.list.dto.CustomerDto;
+import bucket.list.memberdto.SessionMember;
 import bucket.list.service.Customer.CustomerService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,17 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 @Slf4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
 
-
     private final CustomerService customerService;
 
-    @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
 
     //전체 게시글 리스트 보여주는 곳
     @GetMapping()
@@ -64,13 +61,13 @@ public class CustomerController {
     }
     //고객센터 글작성폼에서 넘어오는 메서드
     @PostMapping("/write")
-    public String writeForm(@Valid @ModelAttribute Customer customer,BindingResult bindingResult,@LoginUser SessionMember sessionMember, MultipartFile file) throws IOException {
+    public String writeForm(@Valid  CustomerDto customerDto, BindingResult bindingResult, @LoginUser SessionMember sessionMember, MultipartFile file) throws IOException {
 
         if(bindingResult.hasErrors()){
 
             return "customer/write";
         }
-        customerService.save(customer, file,sessionMember.getMemberId());
+        customerService.save(customerDto, file,sessionMember.getMemberId());
         return "redirect:/customer";
     }
 
@@ -111,8 +108,8 @@ public class CustomerController {
 
     @PostMapping("/edit/{customerIdx}")
     //실제 게시글수정, 파일이미지 업로드
-    public String edit(@ModelAttribute("customer") Customer customer, @PathVariable int customerIdx, MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
-        customerService.save(customer,file,sessionMember.getMemberId());
+    public String edit(@ModelAttribute("customer") CustomerDto customerDto, @PathVariable int customerIdx, MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
+        customerService.save(customerDto,file,sessionMember.getMemberId());
         return "redirect:/customer/";
     }
 

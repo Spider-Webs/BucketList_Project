@@ -3,26 +3,21 @@ package bucket.list.controller;
 
 import bucket.list.config.LoginUser;
 import bucket.list.domain.About;
-import bucket.list.domain.Member;
-import bucket.list.dto.SecurityMember;
-import bucket.list.dto.SessionMember;
-import bucket.list.repository.Member.MemberRepository;
+import bucket.list.dto.AboutDto;
+import bucket.list.memberdto.SessionMember;
 import bucket.list.service.about.AboutService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -71,9 +66,9 @@ public class AboutController {
 
 
     @PostMapping("/write")
-    public String write(@ModelAttribute("about")About about, MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
-
-        aboutService.save(about,file,sessionMember.getMemberId());
+    public String write(@ModelAttribute("about") AboutDto aboutDto, MultipartFile file, @LoginUser SessionMember sessionMember) throws IOException {
+        log.info("text: {},id: {}, file{}",aboutDto.getAboutText(),aboutDto.getAboutNumber(),file);
+        aboutService.save(aboutDto,file,sessionMember.getMemberId());
 
         return "redirect:/about";
 
@@ -106,8 +101,8 @@ public class AboutController {
 
     @PostMapping("/edit/{aboutNumber}")
     //실제 게시글수정, 파일이미지 업로드
-    public String edit(@ModelAttribute("aboutNumber") About about,@PathVariable int aboutNumber,MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
-        aboutService.save(about,file,sessionMember.getMemberId());
+    public String edit(@ModelAttribute("about") AboutDto aboutDto,@PathVariable int aboutNumber,MultipartFile file,@LoginUser SessionMember sessionMember) throws IOException {
+        aboutService.save(aboutDto,file,sessionMember.getMemberId());
         return "redirect:/about/{aboutNumber}/read";
     }
 
