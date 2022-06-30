@@ -1,7 +1,7 @@
 package bucket.list.validator;
 
 
-import bucket.list.dto.UpdatePasswordDto;
+import bucket.list.memberdto.UpdatePasswordDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
