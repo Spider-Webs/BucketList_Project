@@ -1,15 +1,15 @@
 package bucket.list.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
-@Setter
 @Entity
 public class Customer {
 
@@ -21,7 +21,7 @@ public class Customer {
 
     private String customerText;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
     private Member member; // 작성자
 
@@ -29,7 +29,6 @@ public class Customer {
 
     private String customerFile;
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String customerPassword;
     
     private String customerSecret;

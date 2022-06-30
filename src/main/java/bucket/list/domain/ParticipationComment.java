@@ -1,13 +1,14 @@
 package bucket.list.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 //댓글 domain
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
-@Setter
 @Entity
 public class ParticipationComment {
 
@@ -17,12 +18,11 @@ public class ParticipationComment {
 
     private String commentText;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
     private Member member; // 작성자
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participation_idx")
     private Participation participation;
 

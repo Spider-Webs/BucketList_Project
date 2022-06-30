@@ -1,17 +1,14 @@
 package bucket.list.domain;
 
-import bucket.list.dto.AddressEmbed;
-import bucket.list.dto.MemberFormDto;
-import bucket.list.dto.UpdatePasswordDto;
+import bucket.list.memberdto.AddressEmbed;
+import bucket.list.memberdto.MemberFormDto;
+import bucket.list.memberdto.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Setter
@@ -75,15 +72,11 @@ public class Member implements Serializable {
         member.setMemberPhone(memberFormDto.getMemberPhone());
         member.setAddressEmbed(addressEmbed);
         String password = passwordEncoder.encode(memberFormDto.getMemberPassword());
-
         member.setMemberPassword(password);
-
-
-        member.setRole(Role.USER);
+        member.setRole(Role.ADMIN);
 
         return member;
     }
-
 
 
 }

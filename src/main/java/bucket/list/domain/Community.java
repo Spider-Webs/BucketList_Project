@@ -1,14 +1,19 @@
 package bucket.list.domain;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Data
 public class Community {
@@ -22,7 +27,9 @@ public class Community {
     private String communityText;
     private LocalDate communityDate;
     private String communityFile;
-    private String communityWriter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx")
+    private Member member; // 작성자
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private Integer communityCount;//조회수 확인하기위한 변수 기본값은 0, null허용불가 설정
@@ -35,6 +42,7 @@ public class Community {
     public void localAboutDate(){
         this.communityDate = LocalDate.now();
     }//insert 메서드 호출전 DATE변수에 오늘날짜 대입
+
 
 
 }
