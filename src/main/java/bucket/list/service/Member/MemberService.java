@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -70,7 +71,6 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         httpSession.setAttribute("member",new SessionMember(member.get()));
 
         return new CustomMemberDetails(member.get());
-
 
     }
 
@@ -186,5 +186,12 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
             throw new IllegalStateException("기존 비밀번호와 입력하신 현재 비밀번호가 틀립니다.");
         }
 
+    }
+
+    //회원검색
+    public List<Member> findMemberList(String memberKeyword){
+        List<Member> byMemberIdContaining = memberRepository.findByMemberNameContaining(memberKeyword);
+
+        return byMemberIdContaining;
     }
 }
