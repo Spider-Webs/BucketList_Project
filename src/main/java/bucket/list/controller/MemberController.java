@@ -111,7 +111,7 @@ public class MemberController {
         Page<Participation> participation = participationService.findAllWriteList(sessionMember.getMemberId(), pageableParticipation);
         Page<Community> community = communityService.findAllWriteList(sessionMember.getMemberId(), pageableCommunity);
 
-        myPagePaging(model, community);
+
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
         int nowPage = participation.getPageable().getPageNumber() + 1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
@@ -120,7 +120,8 @@ public class MemberController {
         //그렇기에 getTotalpage를  min으로설정)
         int endPage = Math.min(nowPage + 5, participation.getTotalPages());
 
-//        myPagePaging(model, community, nowPage, startPage, endPage);
+        myPageCommunityPaging(model, community, nowPage, startPage, endPage);
+        myPageParticipationPaging(model, participation, nowPage, startPage, endPage);
 
 
         model.addAttribute("nowPage", nowPage);
@@ -136,7 +137,7 @@ public class MemberController {
 
     }
 
-    private void myPagePaging(Model model, Page<Board> page, int nowPage, int startPage, int endPage) {
+    private void myPageCommunityPaging(Model model, Page<Community> page, int nowPage, int startPage, int endPage) {
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
         int nowPageB = page.getPageable().getPageNumber() + 1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
@@ -149,14 +150,17 @@ public class MemberController {
         model.addAttribute("endPageB", endPage);
     }
 
-    private void myPagePaging(Model model, Page<Board> page) {
-        int nowPage = page.getPageable().getPageNumber() + 1;
-        int startPage =Math.max(nowPage-4,1) ;
-        int endPage = Math.min(nowPage + 5, page.getTotalPages());
-
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
+    private void myPageParticipationPaging(Model model, Page<Participation> page, int nowPage, int startPage, int endPage) {
+        //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
+        int nowPageB = page.getPageable().getPageNumber() + 1;
+        //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
+        int startPageB =Math.max(nowPage -4,1) ;
+        //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
+        //그렇기에 getTotalpage를  min으로설정)
+        int endPageB = Math.min(nowPage + 5, page.getTotalPages());
+        model.addAttribute("nowPageB", nowPage);
+        model.addAttribute("startPageB", startPage);
+        model.addAttribute("endPageB", endPage);
     }
 
     @GetMapping("/modifyPassword")
