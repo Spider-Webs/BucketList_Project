@@ -142,14 +142,7 @@
 <br><br><br><br>
 
 
-ERD 
-https://www.erdcloud.com/d/LRK5yNTBek6te6mbS
 
-DB - 엑셀
-https://docs.google.com/spreadsheets/d/15F4yysVkMPwydwkIkiJJAresrJctdSHgpmIC8dA3-qY/edit#gid=0
-
-간트차트 
-https://docs.google.com/spreadsheets/d/18Q_P_u44_oHLFtAkGs3rqCe8gRYR8QN4my8vZ2pLv00/edit#gid=0
 <br>
 참고
 스프링 부트와 AWS로 혼자 구현하는 웹서비스 - 이동욱님
