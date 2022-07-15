@@ -45,8 +45,7 @@
   <li>비공개글의경우 비밀번호 일치하지않으면 비밀번호 입력화면으로 돌아가기</li>
 </ul>
 <h4>개발환경</h4>
-<img src="![1](https://user-images.githubusercontent.com/105139722/179149001-549a6a46-c7f1-449f-9f45-febe53ed15ce.png)
-">
+<img src="https://github.com/Spider-Webs/BucketList_Project/blob/master/1.png">
 
 <h2><a name="three">프로젝트 대표기능</a></h2>
 1. 로그인하여 마이페이지 화면에서 본인이 작성한 글들을 일괄적으로 볼 수 있음<br>
