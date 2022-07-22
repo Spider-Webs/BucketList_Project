@@ -2,10 +2,11 @@ package bucket.list.controller;
 
 import bucket.list.domain.Community;
 import bucket.list.domain.Participation;
-import bucket.list.domain.Search;
 import bucket.list.service.Community.CommunityService;
-import bucket.list.service.Main.MainService;
+
 import bucket.list.service.Participation.ParticipationService;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,56 +17,48 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Controller
-@RequestMapping(value = {"/main","/user"})
+@RequestMapping(value = {"/"})
 public class MainController {
-    private final CommunityService service;
+    private final CommunityService communityService;
     private final ParticipationService participationService;
-    private final MainService mainService;
-
-    @Autowired
-    public MainController(CommunityService service,ParticipationService participationService,MainService mainService){         // controller와 service 연결하는 느낌
-        this.service = service;
-        this.participationService = participationService;
-        this.mainService = mainService;
-    }
 
     @GetMapping("")
-    public String main(Model model,@PageableDefault(page=0, size=4) Pageable pageable){
-        Page<Community> data = maincommunity(pageable);
-        Page<Participation> data2 = mainparticipation(pageable);
+    public String main(Model model, @PageableDefault(page=0, size=4) Pageable pageable, HttpServletResponse response){
 
+        //viewCount 쿠키 생성
+        Cookie cookie = new Cookie("viewCount", null);
+        cookie.setComment("게시글 조회수 확인");  //해당 쿠키용도
+        cookie.setMaxAge(60*60*24*365); //쿠키 유효시간 설정
+        response.addCookie(cookie);
 
-            model.addAttribute("data",data);
-            model.addAttribute("data2", data2);
-            return "/main/main";
+        Page<Community> community = mainCommunity(pageable);
+        Page<Participation> participation = mainParticipation(pageable);
+
+        model.addAttribute("community",community);
+        model.addAttribute("participation", participation);
+
+        return "index";
 
     }
 
-    @PostMapping("")
-    public String main(Model model,Search search){
-            System.out.println("들어옴");
-            List<Community> list = mainService.searchList(search);
-            model.addAttribute("search1",list);
-            System.out.println(list);
-            return "search/searchmain";
-    }
-
-    public Page<Community> maincommunity(@PageableDefault(page = 0, size=4, sort="communityid", direction = Sort.Direction.DESC)
+    private Page<Community> mainCommunity(@PageableDefault(page = 0, size=4, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Community> data =service.showCommunityAll(pageable);
+        Page<Community> community =communityService.CommunityList(pageable);
 
-        return data;
+        return community;
     }
 
-    public Page<Participation> mainparticipation(@PageableDefault(page = 0, size=4, sort="participationidx", direction = Sort.Direction.DESC)
+    private Page<Participation> mainParticipation(@PageableDefault(page = 0, size=4, sort="participationIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Participation> data2 = participationService.AllContentList(pageable);
-        return data2;
+        Page<Participation> participation = participationService.mainParticipationList(pageable);
+        return participation;
     }
 
 }

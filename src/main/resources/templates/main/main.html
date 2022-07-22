@@ -57,11 +57,13 @@
         <h1>
             <span>B</span><span>u</span><span>c</span><span>k</span><span>e</span><span>t</span>
         </h1>
-        <form action="/main" method="POST">
+        <form action="/participation/search" method="POST">
             <div class="mx-auto mt-5 search-bar input-group mb-3">
-                <input name="search" type="text" class="form-control rounded-pill" placeholder="검색어 입력" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <input name="keyword" type="text" class="form-control rounded-pill" placeholder="참여하기 태그 검색 입력" aria-label="Recipient's username" aria-describedby="button-addon2">
                 <div class="input-group-append">
                 </div>
+                <button type="submit" class="btn btn-secondary">검색</button>
+
             </div>
         </form>
     </header>
@@ -148,7 +150,7 @@
                             <div class="text-center">
                                 <!-- Product name-->
                                 <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${data2.participationidx}|}"><div class="h5 card-title mb-3" th:text="${data2.participation_subject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data2.participation_tag}">태그</div>
+                                <div class="fw-bold" th:text="${data2.tag}">태그</div>
                             </div>
                         </div>
                     </div>

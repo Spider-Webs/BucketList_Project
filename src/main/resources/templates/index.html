@@ -57,11 +57,13 @@
         <h1>
             <span>B</span><span>u</span><span>c</span><span>k</span><span>e</span><span>t</span>
         </h1>
-        <form action="/main" method="POST">
+        <form action="/participation/search" method="POST">
             <div class="mx-auto mt-5 search-bar input-group mb-3">
-                <input name="search" type="text" class="form-control rounded-pill" placeholder="검색어 입력" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <input name="keyword" type="text" class="form-control rounded-pill" placeholder="참여하기 태그 검색 입력" aria-label="Recipient's username" aria-describedby="button-addon2">
                 <div class="input-group-append">
                 </div>
+                <button type="submit" class="btn btn-secondary">검색</button>
+
             </div>
         </form>
     </header>
@@ -109,18 +111,18 @@
             <h2 class="font-weight-bold" style="color:green">커뮤니티 추천글</h2>
             <hr class ="one">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5" th:each="data : ${data}">
+                <div class="col mb-5" th:each="community : ${community}">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <!--                        <img class="card-img-top" th:if="${data.communityfilepath}==${data.communityfilepath}" th:src="${data.communityfilepath}" alt="고객이 올린 이미지" />-->
-                        <img class="card-img-top" th:if="${data.communityfile !=null }" th:src="|/imagePath/${data.communityfile}|" alt="고객이 올린 이미지" />
-                        <img class="img-fluid" th:unless="${data.communityfile != null}" src="./imgs/noImage.png" alt="img" />
+
+                        <img class="card-img-top" th:if="${community.communityFile !=null }" th:src="|/imagePath/${community.communityFile}|" alt="고객이 올린 이미지" />
+                        <img class="img-fluid" th:unless="${community.communityFile != null}" src="./imgs/noImage.png" alt="img" />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/finddetail/${data.communityid}|}"><div class="h5 card-title mb-3" th:text="${data.communitysubject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data.communitytag}">태그</div>
+                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/community/${community.communityIdx}|}"><div class="h5 card-title mb-3" th:text="${community.communitySubject}">Blog post title</div></a>
+                                <div class="fw-bold" th:text="${community.communityTag}">태그</div>
                             </div>
                         </div>
                     </div>
@@ -138,17 +140,17 @@
             <h2 class="font-weight-bold" style="color:blue">참여하기 추천글</h2>
             <hr class ="two">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5" th:each="data2 : ${data2}">
+                <div class="col mb-5" th:each="participation : ${participation}">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" th:if="${data2.participation_file !=null }" th:src="|/imagePath/${data2.participation_file}|" alt="고객이 올린 이미지" />
-                        <img class="img-fluid" th:unless="${data2.participation_file != null}" src="./imgs/noImage.png" alt="img" />
+                        <img class="card-img-top" th:if="${participation.participationFile !=null }" th:src="|/imagePath/${participation.participationFile}|" alt="고객이 올린 이미지" />
+                        <img class="img-fluid" th:unless="${participation.participationFile != null}" src="./imgs/noImage.png" alt="img" />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${data2.participationidx}|}"><div class="h5 card-title mb-3" th:text="${data2.participation_subject}">Blog post title</div></a>
-                                <div class="fw-bold" th:text="${data2.participation_tag}">태그</div>
+                                <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${participation.participationIdx}|}"><div class="h5 card-title mb-3" th:text="${participation.participationSubject}">Blog post title</div></a>
+                                <div class="fw-bold" th:text="${participation.participationTag}">태그</div>
                             </div>
                         </div>
                     </div>

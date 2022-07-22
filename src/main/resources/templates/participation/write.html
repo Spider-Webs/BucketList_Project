@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <form th:action th:object="${participation}" method="post" enctype="multipart/form-data">
                             <div class="form-group">
-                                <select class="form-select" aria-label="Default select example" name="participation_option">
+                                <select class="form-select" aria-label="Default select example" name="participationOption">
                                     <option selected>버킷리스트 종류</option>
                                     <option value="travel">여행</option>
                                     <option value="sport">스포츠</option>
@@ -30,43 +30,32 @@
                                 </select>
                             </div>
                         <div class="form-group">
-                            <label for="participation_subject">제목</label>
-                            <input type="text" id="participation_subject" th:field="*{participation_subject}" class="form-control"/>
+                            <label for="participationSubject">제목</label>
+                            <input type="text" id="participationSubject" th:field="*{participationSubject}" class="form-control"/>
                         </div>
 <!--                        <div th:errors="*{participation_subject}" style='color:red'>제목 오류</div>-->
                         <div class="form-group">
-                            <label for="participation_tag">태그</label>
-                            <input type="text" id="participation_tag" th:field="*{participation_tag}" class="form-control"/>
+                            <label for="participationTag">태그</label>
+                            <input type="text" id="participationTag" th:field="*{participationTag}" class="form-control"/>
                         </div>
 <!--                        <div th:errors="*{participation_tag}" style='color:red'>태그 오류</div>-->
+
                         <div class="form-group">
-                            <label for="participation_place">장소</label>
-                            <input type="text" id="participation_place" th:field="*{participation_place}" class="form-control"/>
-                        </div>
-<!--                        <div th:errors="*{participation_place}" style='color:red'>장소 오류</div>-->
-                        <div class="form-group">
-                            <label for="participation_cost">비용</label>
-                            <input type="text" id="participation_cost" name="participation_cost" class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="participation_party">인원수</label>
-                            <input type="text" id="participation_party" name="participation_party" class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="participation_text">내용</label>
-                            <textarea id="participation_text" th:field="*{participation_text}" class="form-control" rows="10" style="resize:none"></textarea>
+                            <label for="participationText">내용</label>
+                            <textarea id="participationText" th:field="*{participationText}" class="form-control" rows="10" style="resize:none"></textarea>
                         </div>
 <!--                        <div th:errors="*{participation_text}" style='color:red'>작성글오류</div>-->
                         <div class="form-group">
                             <label for="file">첨부 이미지</label>
                             <input type="file" id="file" name="file" class="form-control" />
                         </div>
+                        <input type="hidden" name="participationCount" value="0">
                         <div class="form-group">
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary">작성하기</button>
                             </div>
                         </div>
-
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     </form>
                 </div>
             </div>

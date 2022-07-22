@@ -1,42 +1,36 @@
 package bucket.list.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
-@Setter
 @Entity
-@Table(name = "CUSTOMER")
 public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customeridx")
     private Integer customerIdx;
 
-    @Column(name = "customersubject")
     private String customerSubject;
 
-    @Column(name = "customertext")
     private String customerText;
 
-    @Column(name = "customerwriter")
-    private String customerWriter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx")
+    private Member member; // 작성자
 
-    @Column(name = "customerdate")
     private LocalDate customerDate;
 
-    @Column(name = "customerfile")
     private String customerFile;
 
-    @Column(name = "customerpassword")
     private String customerPassword;
-
-    @Column(name = "customersecret")
+    
     private String customerSecret;
 
     @PrePersist

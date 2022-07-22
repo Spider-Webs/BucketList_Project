@@ -1,35 +1,37 @@
 package bucket.list.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@Setter
+@Builder
 @Entity
-public class About {
+public class About implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "aboutnumber")
-    private Integer aboutnumber;
+    private Integer aboutNumber;
 
-    private String about_subject;
+    private String aboutSubject;
 
-    private String about_text;
+    private String aboutText;
 
-    private String about_writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx")
+    private Member member; // 작성자
 
-    private LocalDate about_date;
+    private LocalDate aboutDate;
 
-    private String about_file;
-
+    private String aboutFile;
 
     @PrePersist
     public void localAboutDate(){
-        this.about_date = LocalDate.now();
+        this.aboutDate = LocalDate.now();
     }
 
 }
