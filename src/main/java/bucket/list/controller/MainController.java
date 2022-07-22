@@ -29,9 +29,6 @@ public class MainController {
     private final CommunityService communityService;
     private final ParticipationService participationService;
 
-
-
-
     @GetMapping("")
     public String main(Model model, @PageableDefault(page=0, size=4) Pageable pageable, HttpServletResponse response){
 
@@ -44,7 +41,6 @@ public class MainController {
         Page<Community> community = mainCommunity(pageable);
         Page<Participation> participation = mainParticipation(pageable);
 
-
         model.addAttribute("community",community);
         model.addAttribute("participation", participation);
 
@@ -52,17 +48,16 @@ public class MainController {
 
     }
 
-
-    public Page<Community> mainCommunity(@PageableDefault(page = 0, size=4, sort="communityIdx", direction = Sort.Direction.DESC)
+    private Page<Community> mainCommunity(@PageableDefault(page = 0, size=4, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Community> community =communityService.allContentList(pageable);
+        Page<Community> community =communityService.CommunityList(pageable);
 
         return community;
     }
 
-    public Page<Participation> mainParticipation(@PageableDefault(page = 0, size=4, sort="participationIdx", direction = Sort.Direction.DESC)
+    private Page<Participation> mainParticipation(@PageableDefault(page = 0, size=4, sort="participationIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Page<Participation> participation = participationService.allContentList(pageable);
+        Page<Participation> participation = participationService.mainParticipationList(pageable);
         return participation;
     }
 

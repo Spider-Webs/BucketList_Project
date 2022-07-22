@@ -31,26 +31,27 @@ public class CustomerController {
 
 
     //전체 게시글 리스트 보여주는 곳
-    @GetMapping()
+    @GetMapping
     public String customer(Model model,@PageableDefault(page = 0, size = 10, sort = "customerIdx",direction = Sort.Direction.DESC) Pageable pageable){
 
-        Page<Customer> customer_items = customerService.allContentList(pageable);
+        Page<Customer> customerItems = customerService.CustomerList(pageable);
 
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
-        int nowPage = customer_items.getPageable().getPageNumber() +1;
+        int nowPage = customerItems.getPageable().getPageNumber() +1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
         int startPage =Math.max(nowPage-4,1) ;
         //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
         //그렇기에 getTotalpage를  min으로설정)
-        int endPage = Math.min(nowPage + 5,  customer_items.getTotalPages()) ;
+        int endPage = Math.min(nowPage + 5,  customerItems.getTotalPages()) ;
 
-        model.addAttribute("customer_items", customer_items);
+        model.addAttribute("customerItems", customerItems);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
         return "/customer/main";
     }
+
     //고객센터 글작성 보여주는 메서드
     @GetMapping("/write")
     public String writeForm(Model model){
@@ -85,7 +86,7 @@ public class CustomerController {
                                     @PathVariable("customerIdx")int customerIdx,Model model,
                                     @LoginUser SessionMember sessionMember){
 
-        Customer customer = customerService.oneContentList(customerIdx);
+        Customer customer = customerService.findCustomer(customerIdx);
 
         if(customer.getCustomerPassword().equals(customerPassword)){
             log.info("customerId = {},sessionId = {}",customer.getMember().getMemberId(),sessionMember.getMemberId());
@@ -100,7 +101,7 @@ public class CustomerController {
     //글수정 폼으로 이동하는 메서드
     @GetMapping("/edit/{customerIdx}")
     public String editForm(@PathVariable int customerIdx, Model model){
-        Customer customer = customerService.oneContentList(customerIdx);
+        Customer customer = customerService.findCustomer(customerIdx);
         model.addAttribute("customer", customer);
         model.addAttribute("customerIdx", customerIdx);
         return "customer/edit";
@@ -117,7 +118,7 @@ public class CustomerController {
     //게시글 삭제
     @GetMapping("/delete/{customerIdx}")
     public String delete(@PathVariable int customerIdx){
-        customerService.deleteContent(customerIdx);
+        customerService.deleteCustomer(customerIdx);
         return "redirect:/customer";
     }
 

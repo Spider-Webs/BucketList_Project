@@ -38,7 +38,7 @@ public class ParticipationController {
    @GetMapping
    public String items(Model model,@PageableDefault(page = 0, size = 8,
             sort = "participationIdx",direction = Sort.Direction.DESC) Pageable pageable){
-        Page<Participation> items = participationService.allContentList(pageable);
+        Page<Participation> items = participationService.participationList(pageable);
         participationPaging(model, items);
         model.addAttribute("items", items);
 
@@ -74,7 +74,7 @@ public class ParticipationController {
         response.addCookie(new Cookie("viewCount",cookie));
 
 
-        ParticipationResponseDto participationResponseDto = participationService.oneContentList(participationIdx);
+        ParticipationResponseDto participationResponseDto = participationService.findParticipation(participationIdx);
         List<ParticipationCommentResponseDto> participationComments = participationResponseDto.getComments();
 
             try{
@@ -101,7 +101,7 @@ public class ParticipationController {
     @GetMapping("/edit/{participationIdx}")
     //게시글 수정 view 보여주고 전달
     public String editForm(@PathVariable int participationIdx, Model model){
-        ParticipationResponseDto participation = participationService.oneContentList(participationIdx);
+        ParticipationResponseDto participation = participationService.findParticipation(participationIdx);
         model.addAttribute("participation", participation);
         model.addAttribute("number", participationIdx);
         return "participation/edit";
@@ -120,7 +120,7 @@ public class ParticipationController {
     //게시글 삭제
     public String delete(@PathVariable int participationIdx){
 
-        participationService.deleteContent(participationIdx);
+        participationService.deleteParticipation(participationIdx);
 
         return "redirect:/participation";
     }

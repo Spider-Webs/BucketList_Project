@@ -37,7 +37,7 @@ public class CommunityController {
     public String main(Model model, @PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){        // 커뮤니티 메인
 
-        Page<Community> data =communityService.allContentList(pageable);
+        Page<Community> data =communityService.CommunityList(pageable);
 
         communityPaging(model,data);
 
@@ -55,7 +55,9 @@ public class CommunityController {
     }
 
     @PostMapping("/login/create")
-    public String createCommunity(@LoginUser SessionMember sessionMember, CommunityRequestDto communityRequestDto, MultipartFile file, Model model) throws IOException {        // 커뮤니티 게시물 작성 폼
+    public String createCommunity(@LoginUser SessionMember sessionMember,
+                                  CommunityRequestDto communityRequestDto,
+                                  MultipartFile file, Model model) throws IOException {        // 커뮤니티 게시물 작성 폼
 
             communityService.save(communityRequestDto, file,sessionMember.getMemberId());
 
@@ -63,8 +65,10 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityIdx}")       // 해당 게시물 상세보기
-    public String communityDetail(@PathVariable("communityIdx")int communityIdx, @LoginUser SessionMember sessionMember,
-                                  @CookieValue(name = "viewCount") String cookie, HttpServletResponse response, Model model){
+    public String communityDetail(@PathVariable("communityIdx")int communityIdx,
+                                  @LoginUser SessionMember sessionMember,
+                                  @CookieValue(name = "viewCount") String cookie,
+                                  HttpServletResponse response, Model model){
 
         if(!(cookie.contains(String.valueOf(communityIdx)))){
             cookie += communityIdx + "/";
@@ -72,7 +76,7 @@ public class CommunityController {
         }
         response.addCookie(new Cookie("viewCount",cookie));
 
-        CommunityResponseDto communityResponseDto = communityService.oneContentList(communityIdx);
+        CommunityResponseDto communityResponseDto = communityService.findCommunity(communityIdx);
 
         List<CommunityCommentResponseDto> comments = communityResponseDto.getComments();
 
@@ -90,7 +94,11 @@ public class CommunityController {
 
     }
 
-    private void sendCommunity(int communityIdx, Model model, CommunityResponseDto community, List<CommunityCommentResponseDto> communityComments, @LoginUser SessionMember sessionMember) {
+    private void sendCommunity(int communityIdx, Model model,
+                               CommunityResponseDto community,
+                               List<CommunityCommentResponseDto> communityComments,
+                               @LoginUser SessionMember sessionMember) {
+
         model.addAttribute("comments", communityComments);
         model.addAttribute("community", community);
         model.addAttribute("communityIdx", communityIdx);
@@ -99,14 +107,16 @@ public class CommunityController {
 
     @GetMapping("/edit/{communityIdx}")      // 게시글 수정을 위한 form 페이지(이전 값 불러옴)
     public String communityModify(@PathVariable int communityIdx, Model model){
-        CommunityResponseDto community = communityService.oneContentList(communityIdx);
+        CommunityResponseDto community = communityService.findCommunity(communityIdx);
         model.addAttribute("community", community);
         model.addAttribute("number", communityIdx);
         return "community/edit";
     }
 
     @PostMapping("/edit/{communityIdx}")       // 게시글 수정
-    public String communityModify(CommunityRequestDto communityRequestDto, @PathVariable int communityIdx, MultipartFile file, @LoginUser SessionMember sessionMember) throws IOException {
+    public String communityModify(CommunityRequestDto communityRequestDto,
+                                  @PathVariable int communityIdx, MultipartFile file,
+                                  @LoginUser SessionMember sessionMember) throws IOException {
 
             communityService.save(communityRequestDto, file,sessionMember.getMemberId());
             
@@ -121,7 +131,10 @@ public class CommunityController {
 
     //마이페이지에서 내가 작성 게판목록 검색컨틀로러
     @PostMapping("myWriteSearch")
-    public String myWriteSearch(@RequestParam String keyword,@LoginUser SessionMember sessionMember, Model model,@PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
+    public String myWriteSearch(@RequestParam String keyword,
+                                @LoginUser SessionMember sessionMember,
+                                Model model,
+                                @PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){
 
         Page<Community> myWriteSearch = communityService.myWriteSearch(sessionMember.getMemberId(), keyword,pageable);

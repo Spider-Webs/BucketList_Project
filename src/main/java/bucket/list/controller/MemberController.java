@@ -12,6 +12,7 @@ import bucket.list.service.Community.CommunityService;
 import bucket.list.service.Member.MemberService;
 import bucket.list.service.Participation.ParticipationService;
 
+import bucket.list.service.common.SendMailService;
 import bucket.list.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class MemberController {
     private final ParticipationService participationService;
     private final CommunityService communityService;
     private final MemberValidator validator;
+    private final SendMailService sendMailService;
 
     @GetMapping("/create")
     public String createForm(Model model){
@@ -94,7 +96,7 @@ public class MemberController {
         try {
             memberService.equalEmail(memberEmail);
             MailDto mailDto = memberService.createOrChangePassword(memberEmail);
-            memberService.mailSend(mailDto);
+            sendMailService.mailSend(mailDto);
         }catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
             return "members/findPassword";
@@ -108,8 +110,8 @@ public class MemberController {
             sort = "participationIdx",direction = Sort.Direction.DESC) @Qualifier("participation") Pageable pageableParticipation, @PageableDefault(page = 0, size = 4,
             sort = "communityIdx",direction = Sort.Direction.DESC) @Qualifier("community") Pageable pageableCommunity, Model model){
 
-        Page<Participation> participation = participationService.findAllWriteList(sessionMember.getMemberId(), pageableParticipation);
-        Page<Community> community = communityService.findAllWriteList(sessionMember.getMemberId(), pageableCommunity);
+        Page<Participation> participation = participationService.findParticipationList(sessionMember.getMemberId(), pageableParticipation);
+        Page<Community> community = communityService.findCommunityList(sessionMember.getMemberId(), pageableCommunity);
 
 
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
