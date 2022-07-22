@@ -20,14 +20,16 @@
         <div class="col-sm-6">
             <div class="card shadow">
                 <div class="card-body">
-                    <form th:action method="post" enctype="multipart/form-data">
+                    <form th:action method="post" th:object="${notice}" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="aboutSubject">제목</label>
-                            <input type="text" id="aboutSubject" name="aboutSubject" class="form-control"/>
+                            <label for="noticeSubject">제목</label>
+                            <input type="text" id="noticeSubject" name="noticeSubject" th:field="*{noticeSubject}" class="form-control"/>
+                            <div th:errors="*{noticeSubject}" style='color:red'></div>
                         </div>
                         <div class="form-group">
-                            <label for="aboutText">내용</label>
-                            <textarea id="aboutText" name="aboutText" class="form-control" rows="10" style="resize:none"></textarea>
+                            <label for="noticeText">내용</label>
+                            <textarea id="noticeText" name="noticeText" th:field="*{noticeText}" class="form-control" rows="10" style="resize:none"></textarea>
+                            <div th:errors="*{noticeText}" style='color:red'></div>
                         </div>
                         <div class="form-group">
                             <label for="file">첨부 이미지</label>

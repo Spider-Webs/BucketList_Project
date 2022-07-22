@@ -62,21 +62,19 @@ public class CommunityService {
         communityRequestDto.setMember(byMemberId.get());
     }
 
-
-    public CommunityResponseDto oneContentList(int communityIdx){
+    public CommunityResponseDto findCommunity(int communityIdx){
 
         Community community = communityRepository.findById(communityIdx).get();// 해당 게시물 출력
 
         return new CommunityResponseDto(community);
     }
-
-    public Page<Community> allContentList(Pageable pageable){      // 전체 게시물 출력
+    @Transactional(readOnly = true)
+    public Page<Community> CommunityList(Pageable pageable){      // 전체 게시물 출력
         Page<Community> communities = communityRepository.findAll(pageable);
-        return communities;            // repository에 findAll 함수 호출
+        return communities;
     }
 
-
-    public Page<Community> findAllWriteList(String communityWriter,Pageable pageable){       // 아이디를 통해 나머지 정보 구하기
+    public Page<Community> findCommunityList(String communityWriter,Pageable pageable){
         return communityRepository.findAllWriteList(communityWriter,pageable);
     }
 

@@ -69,25 +69,26 @@ public class ParticipationService {
         participationRequestDto.setMember(byMemberId.get());
     }
     //참여하기 페이지 참여하기 전체글 서비스
-    public Page<Participation> allContentList(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<Participation> participationList(Pageable pageable) {
         Page<Participation> participation = participationRepository.findAll(pageable);
         return participation;
     }
 
     //index 페이지 참여하기 게시글 서비스
-    public Page<Participation> mainAllContentList(Pageable pageable) {
+    public Page<Participation> mainParticipationList(Pageable pageable) {
         Page<Participation> participation = participationRepository.findAll(pageable);
         return participation;
     }
 
     //참여하기 상세게기슬 목록
-    public ParticipationResponseDto oneContentList(Integer participationIdx) {
+    public ParticipationResponseDto findParticipation(Integer participationIdx) {
         Participation participation = participationRepository.findById(participationIdx).get();
         return new ParticipationResponseDto(participation);
     }
 
     //글삭제 메서드
-    public void deleteContent(Integer participationIdx){
+    public void deleteParticipation(Integer participationIdx){
         participationRepository.deleteById(participationIdx);
     }
 
@@ -97,7 +98,7 @@ public class ParticipationService {
     }
 
 
-    public Page<Participation> findAllWriteList(String memberId,Pageable pageable){
+    public Page<Participation> findParticipationList(String memberId,Pageable pageable){
         Optional<Member> member = memberRepository.findByMemberId(memberId);
         log.info("memberId={}, member={}",memberId,member.get().getMemberId());
 

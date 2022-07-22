@@ -23,7 +23,7 @@
                 <div class="d-flex align-items-center mt-lg-5 mb-4">
                     <div class="ms-3">
                         <!-- 작성자 -->
-                        <div class="fw-bold" th:text="|작성자 : ${about.member.memberId}|">작성자</div>
+                        <div class="fw-bold" th:text="|작성자 : ${notice.member.memberId}|">작성자</div>
                         <div class="text-muted">공지사항</div>
                     </div>
                 </div>
@@ -34,22 +34,22 @@
                     <!-- Post header-->
                     <header class="mb-4">
                         <!-- th:text 제목 -->
-                        <h1 class="fw-bolder mb-1" th:text="${about.aboutSubject}">제목</h1>
+                        <h1 class="fw-bolder mb-1" th:text="${notice.noticeSubject}">제목</h1>
                         <!-- th:text 날짜-->
-                        <div class="text-muted fst-italic mb-2" th:text="${about.aboutDate}">날짜</div>
+                        <div class="text-muted fst-italic mb-2" th:text="${notice.noticeDate}">날짜</div>
                     </header>
                     <!-- file 업로드 부분-->
 
-                    <figure class="mb-4"><img class="img-fluid rounded" th:if="${about.aboutFile != null}" th:src="|/imagePath/${about.aboutFile}|" alt="고객이 올린 이미지" /></figure>
+                    <figure class="mb-4"><img class="img-fluid rounded" th:if="${notice.noticeFile != null}" th:src="|/imagePath/${notice.noticeFile}|" alt="고객이 올린 이미지" /></figure>
                     <!-- 글내용부분-->
                     <section class="mb-5">
-                        <p class="fs-5 mb-4" th:text="${about.aboutText}"></p>
+                        <p class="fs-5 mb-4" th:text="${notice.noticeText}"></p>
                     </section>
                 </article>
                 <br>
-                <button type="button" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-success"  th:onclick="|location.href='@{/about/edit/{aboutNumber}/(aboutNumber=${about.aboutNumber})}'|">수정하기</button>
-                <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/about}'|">목록으로</button>
-                <button type="button" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-danger" th:onclick="|location.href='@{/about/delete/{aboutNumber}/(aboutNumber=${about.aboutNumber})}'|">삭제하기</button>
+                <button type="button" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-success"  th:onclick="|location.href='@{/notice/edit/{noticeNumber}/(noticeNumber=${notice.noticeNumber})}'|">수정하기</button>
+                <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/notice}'|">목록으로</button>
+                <button type="button" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-danger" th:onclick="|location.href='@{/notice/delete/{noticeNumber}/(noticeNumber=${notice.noticeNumber})}'|">삭제하기</button>
             </div>
         </div>
     </div>

@@ -1,6 +1,5 @@
 package bucket.list.service.Customer;
 
-import bucket.list.domain.About;
 import bucket.list.domain.Customer;
 import bucket.list.domain.Member;
 import bucket.list.dto.CustomerDto;
@@ -8,7 +7,6 @@ import bucket.list.repository.Customer.CustomerRepository;
 
 import bucket.list.repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +31,7 @@ public class CustomerService {
     private final MemberRepository memberRepository;
 
     //고객센터 게시글저장
+    @Transactional
     public void save(CustomerDto customerDto, MultipartFile file, String memberId) throws IOException {
 
         boolean noneFIle = file.isEmpty();
@@ -63,22 +62,22 @@ public class CustomerService {
     }
 
     //고객센터 전체게시글보여주는 곳
-    @Transactional
-    public Page<Customer> allContentList(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<Customer> CustomerList(Pageable pageable) {
         Page<Customer> page = customerRepository.findAll(pageable);
         return page;
     }
 
     //하나의 게시글읽는곳
     @Transactional
-    public Customer  oneContentList(int customerIdx){
+    public Customer  findCustomer(int customerIdx){
         Customer customer = customerRepository.findById(customerIdx).get();
 
         return customer;
     }
     //게시글 삭제 서비스
     @Transactional
-    public void deleteContent(int customerIdx){
+    public void deleteCustomer(int customerIdx){
         customerRepository.deleteById(customerIdx);
     }
 

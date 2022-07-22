@@ -2,12 +2,15 @@ package bucket.list.service.Member;
 
 import bucket.list.config.CustomMemberDetails;
 import bucket.list.domain.Member;
+import bucket.list.error.ErrorMessage;
 import bucket.list.memberdto.MailDto;
 import bucket.list.memberdto.OAuthAttributes;
 import bucket.list.memberdto.SessionMember;
 import bucket.list.memberdto.UpdatePasswordDto;
 import bucket.list.repository.Member.MemberRepository;
+import bucket.list.service.common.SendMailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,14 +51,16 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
     private void memberIdExist(Member member){ // 중복가입확인여부 메서드
         Optional<Member> memberId = memberRepository.findByMemberId(member.getMemberId());
         if(!memberId.isEmpty()){
-            throw new IllegalStateException("이미 가입된 아이디입니다");
+            throw new IllegalStateException(ErrorMessage.ALREADY_REGISTER.getMessage());
         }
+//        memberId.orElseThrow(() -> new IllegalStateException(existId));
     }
     private void memberEmailExist(Member member){ // 중복가입확인여부 메서드
         Optional<Member> memberEmail = memberRepository.findByMemberEmail(member.getMemberEmail());
         if(!memberEmail.isEmpty()){
-            throw new IllegalStateException("이미 가입된 이메일입니다");
+            throw new IllegalStateException(ErrorMessage.ALREADY_REGISTER.getMessage());
         }
+//        memberEmail.orElseThrow(() -> new IllegalStateException(existEmail));
     }
 
     //데이터 베이스에서 회원정보를 가져오는 UserDetailService인터페이스에 구현 메서드
@@ -65,13 +70,12 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         Optional<Member> member = memberRepository.findByMemberId(memberId);
         
         if (!member.isPresent()) {
-            throw new UsernameNotFoundException("존재하지 않는 Id 입니다.");
+            throw new UsernameNotFoundException(ErrorMessage.NONEXISTENT_ID.getMessage());
         }
 
         httpSession.setAttribute("member",new SessionMember(member.get()));
 
         return new CustomMemberDetails(member.get());
-
     }
 
     @Override
@@ -92,7 +96,6 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
         httpSession.setAttribute("member", new SessionMember(member));
 
-
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().getKey())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
@@ -103,16 +106,13 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
                 .map(entity -> entity.update(attributes.getMemberName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
 
-
         return memberRepository.save(member);
     }
     //비밀번호 찾기시 기재한 이메일과, 가입당시 이메일 일치하는지 확인하는 메서드
     public void equalEmail(String memberEmail){
         Optional<Member> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
-        
         if(byMemberEmail.isEmpty()){
-
-            throw new IllegalStateException("가입되어있지않는 이메일입니다 다시 입력해주세요");
+            throw new IllegalStateException(ErrorMessage.NONEXISTENT_ID.getMessage());
         }
     }
 
@@ -134,19 +134,6 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         Long memberId = memberRepository.findByMemberEmail(memberEmail).get().getMemberIdx();
         memberRepository.tempUpdatePassword(memberId,memberPassword);
     }
-    //메일 발송
-    public void mailSend(MailDto mailDto) {
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailDto.getAddress());
-        message.setSubject(mailDto.getTitle());
-        message.setText(mailDto.getMessage());
-        message.setFrom("dyko3786@gmail.com");
-        message.setReplyTo("dyko3786@gmail.com");
-
-        javaMailSender.send(message);
-    }
-
 
     //랜덤함수로 임시비밀번호 구문 만들기
     public String getTempPassword(){
@@ -182,10 +169,8 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
             memberRepository.save(byMemberEmail.get());
 
         }else{
-
-            throw new IllegalStateException("기존 비밀번호와 입력하신 현재 비밀번호가 틀립니다.");
+            throw new IllegalStateException(ErrorMessage.PASSWORD_MISMATCH.getMessage());
         }
-
     }
 
     //회원검색

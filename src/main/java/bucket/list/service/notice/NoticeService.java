@@ -1,13 +1,12 @@
-package bucket.list.service.about;
+package bucket.list.service.notice;
 
-import bucket.list.domain.About;
+import bucket.list.domain.Notice;
 import bucket.list.domain.Member;
-import bucket.list.dto.AboutDto;
+import bucket.list.dto.NoticeDto;
 import bucket.list.repository.Member.MemberRepository;
-import bucket.list.repository.about.AboutRepository;
+import bucket.list.repository.notice.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,33 +24,33 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class AboutService {
+public class NoticeService {
     @Value("${file.dir}")
     private String fileDir;
 
-    private final AboutRepository aboutRepository;
+    private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
 
     //글작성
     @CacheEvict(value = "allContentList", allEntries = true)
-    public void save(AboutDto dto, MultipartFile file, String memberId) throws IOException {
+    public void save(NoticeDto dto, MultipartFile file, String memberId) throws IOException {
         
         boolean noneFIle = file.isEmpty();
 
         if(!noneFIle) {
-            log.info("text:{}",dto.getAboutText());
+            log.info("text:{}",dto.getNoticeText());
             String fileName = uploadFile(file);
-            dto.setAboutFile(fileName);
+            dto.setNoticeFile(fileName);
         }
         else{
-            dto.setAboutFile(null);
+            dto.setNoticeFile(null);
         }
         memberInsert(dto, memberId);
-        About about = dto.toEntity();
-        aboutRepository.save(about);
+        Notice notice = dto.toEntity();
+        noticeRepository.save(notice);
     }
 
-    private void memberInsert(AboutDto dto, String memberId) {
+    private void memberInsert(NoticeDto dto, String memberId) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
         dto.setMember(byMemberId.get());
     }
@@ -69,25 +68,27 @@ public class AboutService {
     //게시글리스트 처리, 최신글 정렬
     //페이징구현하기위해 Pageable을 매개변수입력
     @Cacheable(value ="allContentList")
-    public Page<About> allContentList(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<Notice> noticeList(Pageable pageable) {
 
-        Page<About> page = aboutRepository.findAll(pageable);
+        Page<Notice> page = noticeRepository.findAll(pageable);
+
         return page;
     }
 
+
     //특정게시글 보는 메서드
-    public About oneContentList(Integer aboutNumber) {
+    public Notice findNotice(Integer noticeNumber) {
 
-        About about = aboutRepository.findById(aboutNumber).get();
+        Notice notice = noticeRepository.findById(noticeNumber).get();
 
-        return about;
+        return notice;
     }
 
     @CacheEvict(value = "allContentList", allEntries = true)
     //글삭제메서드
-    public void deleteContent(Integer aboutNumber){
-        aboutRepository.deleteById(aboutNumber);
+    public void deleteNotice(Integer noticeNumber){
+        noticeRepository.deleteById(noticeNumber);
     }
-
 
 }

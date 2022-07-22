@@ -41,14 +41,14 @@
 
             <div class="d-none d-md-block">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"    th:classappend="${1 == customer_items.pageable.pageNumber + 1}? 'disabled'">
-                        <a href="#" th:href="@{/customer(page=${customer_items.pageable.pageNumber -1})}" class="page-link">이전</a>
+                    <li class="page-item"    th:classappend="${1 == customerItems.pageable.pageNumber + 1}? 'disabled'">
+                        <a href="#" th:href="@{/customer(page=${customerItems.pageable.pageNumber -1})}" class="page-link">이전</a>
                     </li>
                     <li class="page-item" th:each="page : ${#numbers.sequence(startPage,endPage)}">
                         <a href="#" th:href="@{/customer(page=${page})}" class="page-link" th:text="${page}">1</a>
                     </li>
-                    <li class="page-item" th:classappend="${customer_items.totalPages == customer_items.pageable.pageNumber + 1}? 'disabled'">
-                        <a href="#" th:href="@{/customer(page=${customer_items.pageable.pageNumber +1})}" class="page-link">다음</a>
+                    <li class="page-item" th:classappend="${customerItems.totalPages == customerItems.pageable.pageNumber + 1}? 'disabled'">
+                        <a href="#" th:href="@{/customer(page=${customerItems.pageable.pageNumber +1})}" class="page-link">다음</a>
                     </li>
                 </ul>
             </div>

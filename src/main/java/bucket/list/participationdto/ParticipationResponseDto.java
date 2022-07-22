@@ -26,7 +26,7 @@ public class ParticipationResponseDto {
     private Member member;
     private String participationSubject;
     private Integer participationCount;
-    private List<ParticipationCommentResponseDto> comments = new ArrayList<>();
+    private List<ParticipationCommentResponseDto> comments;
     /*
     Entity ->Dto
      */
