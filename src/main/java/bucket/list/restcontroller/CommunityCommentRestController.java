@@ -17,22 +17,6 @@ public class CommunityCommentRestController {
 
     private final CommunityCommentService communityCommentService;
 
-    //댓글 전체 조회
-    @GetMapping
-    public ResponseEntity commentLook(@PathVariable int communityIdx, @RequestBody CommunityCommentRequestDto communityCommentRequestDto,
-                                      @LoginUser SessionMember sessionMember){
-        log.info("Idx :{}, dtp:{}, member:{}",communityIdx,communityCommentRequestDto.getCommentText(),sessionMember.getMemberId());
-        return ResponseEntity.ok(communityCommentService.save(sessionMember.getMemberId(), communityIdx, communityCommentRequestDto));
-    }
-
-    //댓글 전체 조회
-    @GetMapping({"/{commentIdx}"})
-    public ResponseEntity commentLookOne(@PathVariable int communityIdx, @RequestBody CommunityCommentRequestDto communityCommentRequestDto,
-                                      @LoginUser SessionMember sessionMember){
-        log.info("Idx :{}, dtp:{}, member:{}",communityIdx,communityCommentRequestDto.getCommentText(),sessionMember.getMemberId());
-        return ResponseEntity.ok(communityCommentService.save(sessionMember.getMemberId(), communityIdx, communityCommentRequestDto));
-    }
-
    //댓글 저장
     @PostMapping
     public ResponseEntity commentSave(@PathVariable int communityIdx, @RequestBody CommunityCommentRequestDto communityCommentRequestDto,
