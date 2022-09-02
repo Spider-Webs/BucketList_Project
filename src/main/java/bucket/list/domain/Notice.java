@@ -33,5 +33,4 @@ public class Notice implements Serializable{
     public void localAboutDate(){
         this.noticeDate = LocalDate.now();
     }
-
 }
