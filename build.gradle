@@ -30,6 +30,21 @@ dependencies {
 	//캐시사용 - 로컬캐시 ehcache
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'net.sf.ehcache:ehcache-core:2.6.11'
+	//스프링 시큐리티
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	//mysql
+	implementation 'mysql:mysql-connector-java'
+	//권한에 따른 메뉴 동적으로 출력 의존성추가
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	//소셜로그인 연동
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	//세션저장소 db사용
+//	implementation 'org.springframework.session:spring-session-jdbc'
+	//메일 의존성 설정
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis'
 
 
 

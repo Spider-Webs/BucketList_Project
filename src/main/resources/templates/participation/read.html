@@ -22,11 +22,11 @@
                     <div class="d-flex align-items-center mt-lg-5 mb-4">
                         <div class="ms-3">
                             <!-- 작성자 -->
-                            <div class="fw-bold" th:text="|작성자 : ${participation.participation_writer}|">작성자</div>
+                            <div class="fw-bold" th:text="|작성자 : ${participation.member.memberId}|">작성자</div>
                             <!-- 메뉴 목록이름 -->
                             <div class="text-muted">양동이 살펴보기</div>
                             <!-- 조회수 -->
-                            <div class="text-muted" th:text="|조회수 :  ${participation.count}|">조회수</div>
+                            <div class="text-muted" th:text="|조회수 :  ${participation.participationCount}|">조회수</div>
 
                         </div>
                     </div>
@@ -37,16 +37,16 @@
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- 제목 -->
-                            <h1 class="fw-bolder mb-1" th:text="${participation.participation_subject}">제목</h1>
+                            <h1 class="fw-bolder mb-1" th:text="${participation.participationSubject}">제목</h1>
                             <!-- 작성일 -->
-                            <div class="text-muted fst-italic mb-2" th:text="${participation.participation_date}">작성일</div>
+                            <div class="text-muted fst-italic mb-2" th:text="${participation.participationDate}">작성일</div>
                         </header>
                         <!-- 파일업로드 -->
-                        <figure class="mb-4"><img class="img-fluid rounded" th:if="${participation.participation_file != null}" th:src="|/imagePath/${participation.participation_file}|" alt="..." /></figure>
+                        <figure class="mb-4"><img class="img-fluid rounded" th:if="${participation.participationFile != null}" th:src="|/imagePath/${participation.participationFile}|" alt="..." /></figure>
 
                         <!-- 글 작성 문단-->
                         <section class="mb-5">
-                            <p class="fs-5 mb-4" th:text="${participation.participation_text}" >글내용</p>
+                            <p class="fs-5 mb-4" th:text="${participation.participationText}" >글내용</p>
                         </section>
                     </article>
                     <!-- 댓글항목 -->
@@ -54,40 +54,62 @@
                         <div class="card bg-light">
                             <div class="card-body">
                                 <!-- 댓글폼 -->
-                                <form class="mb-4" th:action="@{|/participation/comment/${participationidx}|}" method="post" >
-                                    <textarea class="form-control" rows="3" id="comment_text" name="comment_text" placeholder="답글을 달아보세요!"></textarea>
-                                    <input type="hidden" th:field="${participation.participationidx}">
-                                    <button class="w-100 btn btn-primary btn-lg" type="submit">답글
+                                <form class="mb-4">
+                                    <textarea class="form-control" rows="3" id="commentText" name="commentText" placeholder="답글을 달아보세요!"></textarea>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" id="participationIdx" name="participationIdx" th:value="${participation.participationIdx}">
+                                    <button id="btn-comment-save" class="w-100 btn btn-primary btn-lg" type="submit">답글
                                         등록</button>
                                 </form>
-                                <!-- Comment with nested comments-->
-                                <div class="d-flex mb-4" th:each="comment : ${comments}">
+                                <!-- Comment with nested participationComments-->
+                                <div class="d-flex mb-4" th:each="participationComment : ${participationComments}">
                                     <!-- 답글-->
                                     <div class="ms-3" >
                                         <div class="d-flex mt-4">
                                             <div class="ms-3">
                                                 <table>
                                                     <tr>
-                                                        <div class="fw-bold" th:text="|작성자 : ${comment.comment_writer}|">작성자</div>
+                                                        <div class="fw-bold" th:text="|작성자 : ${participationComment.member.memberId}|">작성자</div>
 
                                                     </tr>
                                                     <tr>
-                                                        <div th:text="${comment.comment_text}"> 답글내용</div>
-                                                        <!--                                                        <div >-->
-                                                        <!--                                                            <textarea  name="comment_text"  cols="30" rows="5" th:text="${comment.comment_text}" th:value="${comment.comment_text}"></textarea>-->
-                                                        <!--                                                        </div>-->
+                                                        <div th:text="${participationComment.commentText}"> 답글내용</div>
+
                                                         <td>
-                                                            <button type="button" class="btn btn-light" th:if="${dbwriter2 !=null}" th:onclick="|location.href='@{|/participation/commentEdit/${comment.commentidx}/${participationidx}|}'|">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                                            <button th:if=${participationComment.member.memberId==sessionMember} type="button" class="btn btn-light" data-bs-toggle="collapse" data-bs-target="#collapseExample24"  aria-expanded="false" aria-controls="collapseExample">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-pencil" viewBox="0 0 16 16">
+                                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1
+                                                                    -.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207
+                                                                    2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761
+                                                                    5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                                                                 </svg>
                                                             </button>
                                                         </td>
+                                                        <div class="collapse" th:id="|collapseExample${participationComment.commentIdx}|">
+                                                            <form>
+                                                                <input type="hidden" id="commentIdx" th:value="${participationComment.commentIdx}">
+                                                                <input type="hidden" id="participationIdxModify" th:value="${participation.participationIdx}">
+                                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control" id="commentContent" rows="3" ></textarea>
+                                                                </div>
+                                                                <button type="button" id="btn-comment-modify" class="btn btn-outline-primary bi bi-pencil-square"> 수정</button>
+                                                            </form>
+                                                        </div>
+
                                                         <td>
-                                                            <button type="button" class="btn btn-light"  th:if="${dbwriter2 !=null}"  th:onclick="|location.href='@{|/participation/commentDelete/${comment.commentidx}/${participationidx}|}'|">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                            <button th:if=${participationComment.member.memberId==sessionMember} type="button" class="btn btn-light" th:onclick="|main.commentDelete(${participation.participationIdx},${participationComment.commentIdx})|">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor" class="bi bi-trash"
+                                                                     viewBox="0 0 16 16">
+                                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0
+                                                                    1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                                    <path fill-rule="evenodd"
+                                                                          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0
+                                                                          1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1
+                                                                          1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                                                                 </svg>
                                                             </button>
                                                         </td>
@@ -101,12 +123,98 @@
                         </div>
                     </section>
                     <br>
-                    <button type="button"  th:if="${dbwriter2 != null}" class="btn btn-success"  th:onclick="|location.href='@{/participation/edit/{participationidx}/(participationidx=${participation.participationidx})}'|">수정하기</button>
+                    <button type="button"  th:if="${participation.member.memberId == sessionMember}" class="btn btn-success"  th:onclick="|location.href='@{/participation/edit/{participationIdx}/(participationIdx=${participation.participationIdx})}'|">수정하기</button>
                     <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/participation}'|">목록으로</button>
-                    <button type="button"  th:if="${dbwriter2 != null}" class="btn btn-danger" th:onclick="|location.href='@{/participation/delete/{participationidx}/(participationidx=${participation.participationidx})}'|">삭제하기</button>
+                    <button type="button"  th:if="${participation.member.memberId == sessionMember}" class="btn btn-danger" th:onclick="|location.href='@{/participation/delete/{participationIdx}/(participationIdx=${participation.participationIdx})}'|">삭제하기</button>
                 </div>
             </div>
         </div>
+        <script th:inline="javascript">
+        const main = {
+            init : function() {
+                const _this = this;
+                 $('#btn-comment-save').on('click', function () {
+                    _this.commentSave();
+                 });
+
+            document.querySelectorAll('#btn-comment-modify').forEach(function (item) {
+                 item.addEventListener('click', function () {
+                     const form = this.closest('form');
+                     _this.commentUpdate(form);
+                 });
+            });
+
+            },
+
+            commentSave : function () {
+
+                const data = {
+                    participationIdx: $('#participationIdx').val(),
+                    commentText: $('#commentText').val()
+                }
+                 if (!data.commentText || data.commentText.trim() === "") {
+                  alert("공백 또는 입력하지 않은 부분이 있습니다.");
+                  return false;
+                 } else {
+                     $.ajax({
+                         type: 'POST',
+                         url: '/api/participation/' + data.participationIdx + '/comments',
+<!--                        dataType: 'JSON',-->
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(data)
+                      }).done(function () {
+                         alert('댓글이 등록되었습니다.');
+                         window.location.reload();
+                      }).fail(function (error) {
+                           alert(JSON.stringify(error));
+                           });
+                    }
+            },
+
+            commentUpdate : function (form) {
+                const data = {
+                    commentIdx: document.getElementById('commentIdx').value,
+                    participationIdxModify: document.getElementById('participationIdxModify').value,
+                    commentText: document.getElementById('commentContent').value,
+                }
+
+
+                const con_check = confirm("수정하시겠습니까?");
+                if (con_check === true) {
+                    $.ajax({
+                        type: 'PUT',
+                        url: '/api/participation/' + data.participationIdxModify + '/comments/' + data.commentIdx,
+                        dataType: 'JSON',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(data)
+                    }).done(function () {
+                        window.location.reload();
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    });
+                }
+            },
+
+            commentDelete : function (participationIdxModify, commentIdx) {
+                const con_check = confirm("삭제하시겠습니까?");
+                if (con_check === true) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/api/participation/' + participationIdxModify + '/comments/' + commentIdx,
+                        dataType: 'JSON',
+                    }).done(function () {
+                        alert('댓글이 삭제되었습니다.');
+                        window.location.reload();
+                    }).fail(function (error) {
+                        alert(JSON.stringify(error));
+                    });
+                }
+            }
+
+        };
+            main.init();
+
+        </script>
     </section>
 </main>
 <!-- Footer-->

@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>버킷리스트</title>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
     <style>
        * { box-sizing:border-box; }
        a { text-decoration: none; }
@@ -52,19 +55,32 @@
             color:red;
             margin-bottom: 20px;
         }
+         .error {
+            color: #bd2130;
+        }
+        a {
+              text-decoration: none;
+            }
     </style>
 </head>
-<body>
-
+<body class="d-flex flex-column">
+<main class="flex-shrink-0">
+    <div th:replace="~{include/TopMenuService :: TopMenuService}"></div>
     <form action="/members/login" method="post" onsubmit="return Check(this);">
         <ht3 id="title">로그인</ht3>
         <div id="msg">
 	    </div>
         <input type="text" name="memberId" placeholder="아이디 입력" autofocus>
         <input type="password" name="memberPassword" placeholder="비밀번호">
+        <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
+        <br>
+        <div><a href="/members/findPassword"  role="button">비밀번호 찾기</a></div>
         <button>로그인</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-        <div><a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a></div>
+        <br>
+        <div><a href="/oauth2/authorization/google"role="button">Google Login</a></div>
+        <br>
+        <a href="/oauth2/authorization/naver"  role="button">Naver Login</a>
         <br>
         <div>
             <a th:href="@{create}">회원가입</a>
@@ -90,5 +106,7 @@
 
     </form>
 
+
+</main>
 </body>
 </html>

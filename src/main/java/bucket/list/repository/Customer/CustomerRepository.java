@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Integer> {
 
-    @Query(value = "select customerwriter from customer where customeridx=?", nativeQuery = true)
-    String selectIdSQL(int customerIdx);
+
 
 }

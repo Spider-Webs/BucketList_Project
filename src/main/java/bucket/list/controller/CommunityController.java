@@ -1,202 +1,161 @@
 package bucket.list.controller;
 
+import bucket.list.communitydto.CommunityCommentResponseDto;
+import bucket.list.config.LoginUser;
 import bucket.list.domain.Community;
-import bucket.list.domain.Login;
+import bucket.list.communitydto.CommunityRequestDto;
+import bucket.list.communitydto.CommunityResponseDto;
+import bucket.list.memberdto.SessionMember;
+import bucket.list.participationdto.ParticipationCommentResponseDto;
+import bucket.list.participationdto.ParticipationResponseDto;
+import bucket.list.service.Community.CommunityCommentService;
 import bucket.list.service.Community.CommunityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping(value="/community")
 public class CommunityController {
 
-
-    CommunityService service;
-    @Autowired
-    public CommunityController(CommunityService service){         // controller와 service 연결하는 느낌
-        this.service = service;
-    }
-
-
+    private final CommunityService communityService;
+    private final CommunityCommentService communityCommentService;
 
     @GetMapping("")
-    public String Communitymain(Model model, @PageableDefault(page = 0, size=8, sort="communityid", direction = Sort.Direction.DESC)
+    public String main(Model model, @PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
             Pageable pageable){        // 커뮤니티 메인
 
-        Page<Community> data =service.showCommunityAll(pageable);
+        Page<Community> data =communityService.CommunityList(pageable);
 
+        communityPaging(model,data);
+
+        model.addAttribute("data",data);
+
+        return "community/main";
+    }
+
+    @GetMapping("/login/create")
+    public String createForm(Model model){        // 게시물 작성 폼
+
+        model.addAttribute("community", new Community());
+
+        return "community/write";
+    }
+
+    @PostMapping("/login/create")
+    public String createCommunity(@LoginUser SessionMember sessionMember,
+                                  CommunityRequestDto communityRequestDto,
+                                  MultipartFile file, Model model) throws IOException {        // 커뮤니티 게시물 작성 폼
+
+            communityService.save(communityRequestDto, file,sessionMember.getMemberId());
+
+        return "redirect:/community";
+    }
+
+    @GetMapping("/{communityIdx}")       // 해당 게시물 상세보기
+    public String communityDetail(@PathVariable("communityIdx")int communityIdx,
+                                  @LoginUser SessionMember sessionMember,
+                                  @CookieValue(name = "viewCount") String cookie,
+                                  HttpServletResponse response, Model model){
+
+        if(!(cookie.contains(String.valueOf(communityIdx)))){
+            cookie += communityIdx + "/";
+            communityService.updateCount(communityIdx);
+        }
+        response.addCookie(new Cookie("viewCount",cookie));
+
+        CommunityResponseDto communityResponseDto = communityService.findCommunity(communityIdx);
+
+        List<CommunityCommentResponseDto> comments = communityResponseDto.getComments();
+
+        if(sessionMember !=null&&sessionMember.getMemberId().equals(communityResponseDto.getMember().getMemberId())) {
+            sendCommunity(communityIdx,model, communityResponseDto,comments,sessionMember);
+        }else{
+            notLoggedInUser(communityIdx,model, communityResponseDto,comments);
+        }
+        return "community/read";
+
+    }
+
+    private void sendCommunity(int communityIdx, Model model, CommunityResponseDto community, List<CommunityCommentResponseDto> communityComments, @LoginUser SessionMember sessionMember) {
+        model.addAttribute("comments", communityComments);
+        model.addAttribute("community", community);
+        model.addAttribute("communityIdx", communityIdx);
+        model.addAttribute("sessionMember", sessionMember.getMemberId());
+    }
+
+    private void notLoggedInUser(int communityIdx, Model model, CommunityResponseDto community, List<CommunityCommentResponseDto> communityComments){
+        model.addAttribute("communityComments", communityComments);
+        model.addAttribute("community", community);
+        model.addAttribute("communityIdx", communityIdx);
+    }
+
+    @GetMapping("/edit/{communityIdx}")      // 게시글 수정을 위한 form 페이지(이전 값 불러옴)
+    public String communityModify(@PathVariable int communityIdx, Model model){
+        CommunityResponseDto community = communityService.findCommunity(communityIdx);
+        model.addAttribute("community", community);
+        model.addAttribute("number", communityIdx);
+        return "community/edit";
+    }
+
+    @PostMapping("/edit/{communityIdx}")       // 게시글 수정
+    public String communityModify(CommunityRequestDto communityRequestDto,
+                                  @PathVariable int communityIdx, MultipartFile file,
+                                  @LoginUser SessionMember sessionMember) throws IOException {
+
+        communityService.save(communityRequestDto, file,sessionMember.getMemberId());
+            
+        return "redirect:/community/{communityIdx}";
+    }
+
+    @GetMapping("/delete/{communityIdx}")         // 게시물 삭제
+    public String communityDelete(int communityIdx){
+        communityService.communityDelete(communityIdx);
+        return "redirect:/community";
+    }
+
+    //마이페이지에서 내가 작성 게판목록 검색컨틀로러
+    @PostMapping("myWriteSearch")
+    public String myWriteSearch(@RequestParam String keyword,
+                                @LoginUser SessionMember sessionMember,
+                                Model model,
+                                @PageableDefault(page = 0, size=8, sort="communityIdx", direction = Sort.Direction.DESC)
+            Pageable pageable){
+
+        Page<Community> myWriteSearch = communityService.myWriteSearch(sessionMember.getMemberId(), keyword,pageable);
         //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
-        int nowPage = data.getPageable().getPageNumber() + 1;
+        communityPaging(model, myWriteSearch);
+        model.addAttribute("myWriteSearch", myWriteSearch);
+
+        return "community/myWriteSearch";
+    }
+
+    //커뮤니티페이징 처리를 위한 메서드
+    private void communityPaging(Model model, Page<Community> page) {
+        int nowPage = page.getPageable().getPageNumber() + 1;
         //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
         int startPage =Math.max(nowPage-4,1) ;
         //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
         //그렇기에 getTotalpage를  min으로설정)
-        int endPage = Math.min(nowPage + 5, data.getTotalPages());
+        int endPage = Math.min(nowPage + 5, page.getTotalPages());
 
-        model.addAttribute("data",data);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-
-
-        return "community/communitymain2";
-
-        // 세션 삭제
-//        HttpSession session = request.getSession(false);
-//
-//
-//
-//        if((Boolean)session.getAttribute("userid")){
-//            Page<Community> data =service.showCommunityAll(pageable);
-//
-//            //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
-//            int nowPage = data.getPageable().getPageNumber() + 1;
-//            //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
-//            int startPage =Math.max(nowPage-4,1) ;
-//            //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
-//            //그렇기에 getTotalpage를  min으로설정)
-//            int endPage = Math.min(nowPage + 5, data.getTotalPages());
-//
-//            model.addAttribute("data",data);
-//            model.addAttribute("nowPage", nowPage);
-//            model.addAttribute("startPage", startPage);
-//            model.addAttribute("endPage", endPage);
-//
-//            session.removeAttribute("userid");
-//
-//            return "community/communitymain2";
-//        }else if(!(Boolean)session.getAttribute("userid")){
-//            Page<Community> data =service.showCommunityAll(pageable);
-//
-//            //현재 페이지 변수 Pageable 0페이지부터 시작하기 +1을해줘서 1페이지부터 반영한다
-//            int nowPage = data.getPageable().getPageNumber() + 1;
-//            //블럭에서 보여줄 시작페이지(Math.max 한이유는 시작페이지가 마이너스 값일 수는 업으니깐 Math.max를 사용)
-//            int startPage =Math.max(nowPage-4,1) ;
-//            //블럭에서 보여줄때 마지막페이지(Math.min 한이유는 총페이지가 10페이지인데, 현재페이지가 9페이지이면 14페이지가되므로 오류,
-//            //그렇기에 getTotalpage를  min으로설정)
-//            int endPage = Math.min(nowPage + 5, data.getTotalPages());
-//
-//            model.addAttribute("data",data);
-//            model.addAttribute("nowPage", nowPage);
-//            model.addAttribute("startPage", startPage);
-//            model.addAttribute("endPage", endPage);
-//
-//
-//            return "community/communitymain2";
-//        }else{
-//            return null;
-//        }
-    }
-
-
-    @GetMapping("/create")
-    public String createStore(HttpServletRequest request){        // 게시물 작성 폼
-        HttpSession session = request.getSession();
-        System.out.println(((Login)session.getAttribute("loginMember")).getId() + "님이 마이페이지에 들어왔습니다.");
-        return "community/communityadd";
-    }
-
-    @PostMapping("/create")
-    public String createCommunity(HttpServletRequest request,Community community, MultipartFile file) throws IOException {        // 커뮤니티 게시물 작성 폼
-
-        HttpSession session = request.getSession();
-        if(session != null){
-            community.setCommunitywriter(((Login)session.getAttribute("loginMember")).getId());
-            service.createCommunity(community,file);                    //DB에 입력한 값을 넣어야 해요.
-        }else{
-            service.createCommunity(community,file);
-        }
-
-        return "redirect:/community";
-    }
-
-    @GetMapping("/finddetail/{id}")       // 해당 게시물 출력
-    public String findcommunitydetail(@PathVariable("id")int id, Model model,HttpServletRequest request){
-
-        HttpSession session = request.getSession(false);        // 세션의 유무 설정
-           // sessionwriter에 현재 세션의 user이름을 넣어줌
-
-
-        String dbwriter = service.selectIdSQL(id);       // 해당 게시물의 writer 정보를 dbwriter에 저장함
-        String result = "true";
-     //   String temp = (String) session.getAttribute("userid");
-
-        // 현재 수정, 삭제 보여주는 세션이 한번 생성되면 계속 유지가 됨 즉, 상세 페이지에 한해서만 동작되도록 바꿔야함
-
-        if(session == null){
-            model.addAttribute("data",service.showCommunityById(id));
-            System.out.println("다릅니다.");
-            return "community/communitydetail";
-        }
-
-        if(session != null){
-            String sessionwriter = ((Login)session.getAttribute("loginMember")).getId();
-            if(sessionwriter.equals(dbwriter)){
-                session.setAttribute("userid", result);
-                model.addAttribute("data",service.showCommunityById(id));
-                System.out.println("같습니다.");
-                return "community/communitydetail";
-            }else{
-                model.addAttribute("data",service.showCommunityById(id));
-                System.out.println("다릅니다.");
-                return "community/communitydetail";
-            }
-        }else{
-            return null;
-        }
-
-    }
-
-//    @GetMapping("/findall")        // 전체 출력
-//    public String findStoreAll(Model model){
-//        List<Community> data = service.showCommunityAll();
-//        model.addAttribute("data",data);
-//
-//        return "community/Communitymain";
-//    }
-
-
-
-    @GetMapping("/edit/{id}")      // 게시글 수정을 위한 form 페이지(이전 값 불러옴)
-    public String Communitymodify(@PathVariable("id") int id, Model model){
-        model.addAttribute("data", service.showCommunityById(id));
-        return "community/communitymodify";
-    }
-
-    @PostMapping("/modify/{id}")       // 게시글 수정
-    public String commumitymodify(Community community, @PathVariable("id") int id){
-        Community communitytemp = service.showCommunityById(id);
-
-        communitytemp.setCommunitytag(community.getCommunitytag());       // 기존의 내용중 이름을 새로운 값으로 덮어씌움
-        communitytemp.setCommunitylocation(community.getCommunitylocation());
-        communitytemp.setCommunityprice(community.getCommunityprice());
-        communitytemp.setCommunitykind(community.getCommunitykind());
-        communitytemp.setCommunitycontent(community.getCommunitycontent());
-        communitytemp.setCommunitylink(community.getCommunitylink());
-
-        service.createeditCommunity(communitytemp);
-        return "redirect:/community";
-    }
-
-    @GetMapping("/delete")         // 게시물 삭제
-    public String communitydelete(int id){
-        service.communitydelete(id);
-        return "redirect:/community";
     }
 
 }

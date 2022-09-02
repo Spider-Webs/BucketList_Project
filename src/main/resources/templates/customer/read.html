@@ -22,7 +22,7 @@
         <div class="d-flex align-items-center mt-lg-5 mb-4">
           <div class="ms-3">
             <!-- 작성자 -->
-            <div class="fw-bold" th:text="|작성자 : ${customer.customerWriter}|">작성자</div>
+            <div class="fw-bold" th:text="|작성자 : ${customer.member.memberId}|">작성자</div>
             <div class="text-muted">고객센터</div>
           </div>
         </div>
@@ -45,9 +45,9 @@
           </section>
         </article>
         <br>
-        <button type="button" th:if="${dbwriter != null}" class="btn btn-success"  th:onclick="|location.href='@{/customer/edit/{customerIdx}/(customerIdx=${customer.customerIdx})}'|">수정하기</button>
+        <button th:if="${customer.member.memberId==sessionMember}" type="button"  class="btn btn-success"  th:onclick="|location.href='@{/customer/edit/{customerIdx}/(customerIdx=${customer.customerIdx})}'|">수정하기</button>
         <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/customer}'|">목록으로</button>
-        <button type="button" th:if="${dbwriter != null}" class="btn btn-danger" th:onclick="|location.href='@{/customer/delete/{customerIdx}/(customerIdx=${customer.customerIdx})}'|">삭제하기</button>
+        <button th:if="${customer.member.memberId==sessionMember}" type="button"  class="btn btn-danger" th:onclick="|location.href='@{/customer/delete/{customerIdx}/(customerIdx=${customer.customerIdx})}'|">삭제하기</button>
       </div>
     </div>
 </section>
@@ -58,5 +58,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
 <script src="js/scripts.js"></script>
+
 </body>
 </html>

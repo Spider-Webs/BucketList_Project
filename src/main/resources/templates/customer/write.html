@@ -9,6 +9,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <style>
+    #errorMessage{
+            color:red;
+        }
+  </style>
 </head>
 <body>
 <!-- 상단 메뉴 부분 -->
@@ -20,14 +25,14 @@
     <div class="col-sm-6">
       <div class="card shadow">
         <div class="card-body">
-          <form th:action method="post" enctype="multipart/form-data">
+          <form th:action  th:object="${customer}" method="post"  enctype="multipart/form-data">
             <div class="form-group">
               <label for="customerSubject">제목</label>
-              <input type="text" id="customerSubject" name="customerSubject" class="form-control"/>
+              <input type="text" id="customerSubject" th:field="*{customerSubject}" class="form-control"/>
             </div>
             <div class="form-group">
               <label for="customerText">내용</label>
-              <textarea id="customerText" name="customerText" class="form-control" rows="10" style="resize:none"></textarea>
+              <textarea id="customerText" th:field="*{customerText}" class="form-control" rows="10" style="resize:none"></textarea>
             </div>
             <div class="form-group">
               <label for="file">첨부 이미지</label>
@@ -35,20 +40,21 @@
             </div>
             <div class="form-group">
               <label for="customerPassword">비밀번호</label>
-              <input type="password" id="customerPassword" name="customerPassword" class="form-control" />
+              <input type="password" th:field="*{customerPassword}" id="customerPassword" class="form-control" />
+              <div  th:if="${#fields.hasErrors('customerPassword')}" th:errors="*{customerPassword}" style='color:red'>비밀번호 오류</div>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio1" value="t" checked>
+              <input class="form-check-input" type="radio" th:field="*{customerSecret}" id="inlineRadio1" value="t" disabled>
               <label class="form-check-label" for="inlineRadio1">공개글</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="customerSecret" id="inlineRadio2" value="f" >
+              <input class="form-check-input" type="radio" th:field="*{customerSecret}" checked="checked" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" id="inlineRadio2" value="f"  >
               <label class="form-check-label" for="inlineRadio2">비공개글</label>
             </div>
 
             <div class="form-group">
               <div class="text-right">
-                <button type="submit" class="btn btn-primary">작성하기</button>
+                <button type="submit" class="btn btn-primary">등록</button>
               </div>
             </div>
 
@@ -61,6 +67,5 @@
 </div>
 
 <div th:replace="~{include/BottomMenuService :: BottomMenuService}"></div>
-
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -31,20 +31,20 @@
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
         <div class="text-right" align="right" style = "padding: 0px 10px 20px 0px;">
-            <a th:href="@{|/participation/write|}" class="btn btn-primary">글쓰기</a>
+            <a th:href="@{|/participation/login/write|}" class="btn btn-primary">글쓰기</a>
         </div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-5" th:each="item : ${items}">
                 <div class="card h-100">
                     <!-- Product image-->
-                    <img class="img-fluid" th:if="${item.participation_file != null}" th:src="|/imagePath/${item.participation_file}|" alt="img" />
-                    <img class="img-fluid" th:unless="${item.participation_file != null}" src="./imgs/noImage.png" alt="img" />
+                    <img class="img-fluid" th:if="${item.participationFile != null}" th:src="|/imagePath/${item.participationFile}|" alt="img" />
+                    <img class="img-fluid" th:unless="${item.participationFile != null}" src="./imgs/noImage.png" alt="img" />
                     <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
                             <!-- Product name-->
-                            <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${item.participationidx}|}"><div class="h5 card-title mb-3" th:text="${item.participation_subject}">Blog post title</div></a>
-                            <div class="fw-bold" th:text="${item.participation_tag}">태그</div>
+                            <a class="text-decoration-none link-dark stretched-link" th:href="@{|/participation/${item.participationIdx}|}"><div class="h5 card-title mb-3" th:text="${item.participationSubject}">Blog post title</div></a>
+                            <div class="fw-bold" th:text="${item.participationTag}">태그</div>
                         </div>
                     </div>
                 </div>
