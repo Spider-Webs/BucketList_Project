@@ -57,8 +57,6 @@ public class AboutController {
             extracted(model,about_items);
             return "about/about";
         }
-
-
     }
 
     private void extracted(Model model, Page<About> about_items) {
@@ -75,7 +73,6 @@ public class AboutController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
     }
-
 
     //글쓰기페이지
     @GetMapping("/write")
