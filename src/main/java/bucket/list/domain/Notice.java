@@ -11,27 +11,27 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @Entity
-public class About implements Serializable {
+public class Notice implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer aboutNumber;
+    private Integer noticeNumber;
 
-    private String aboutSubject;
+    private String noticeSubject;
 
-    private String aboutText;
+    private String noticeText;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
     private Member member; // 작성자
 
-    private LocalDate aboutDate;
+    private LocalDate noticeDate;
 
-    private String aboutFile;
+    private String noticeFile;
 
     @PrePersist
     public void localAboutDate(){
-        this.aboutDate = LocalDate.now();
+        this.noticeDate = LocalDate.now();
     }
 
 }

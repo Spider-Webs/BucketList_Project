@@ -11,6 +11,8 @@ import bucket.list.participationdto.ParticipationResponseDto;
 import bucket.list.service.Participation.ParticipationCommentService;
 import bucket.list.service.Participation.ParticipationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,6 +29,7 @@ import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/participation")
 public class ParticipationController {
 
@@ -73,21 +76,15 @@ public class ParticipationController {
         }
         response.addCookie(new Cookie("viewCount",cookie));
 
-
         ParticipationResponseDto participationResponseDto = participationService.findParticipation(participationIdx);
         List<ParticipationCommentResponseDto> participationComments = participationResponseDto.getComments();
-
-            try{
-                if(sessionMember !=null&&sessionMember.getMemberId().equals(participationResponseDto.getMember().getMemberId())) {
-                    sendParticipation(participationIdx, model, participationResponseDto, participationComments,sessionMember);
-                }else{
-                    sendParticipation(participationIdx, model, participationResponseDto, participationComments,sessionMember);
-                }
-                return "participation/read";
-            } catch (NullPointerException e){
-                sendParticipation(participationIdx, model, participationResponseDto, participationComments,sessionMember);
-                return "participation/read";
-            }
+                //로그인한 사용자이면서 글작성자
+        if(sessionMember !=null&&sessionMember.getMemberId().equals(participationResponseDto.getMember().getMemberId())) {
+            sendParticipation(participationIdx, model, participationResponseDto, participationComments,sessionMember);
+        }else{
+            notLoggedInUser(participationIdx, model, participationResponseDto, participationComments);
+        }
+        return "participation/read";
     }
 
     private void sendParticipation(int participationIdx, Model model, ParticipationResponseDto participation, List<ParticipationCommentResponseDto> participationComments,@LoginUser SessionMember sessionMember) {
@@ -95,6 +92,11 @@ public class ParticipationController {
         model.addAttribute("participation", participation);
         model.addAttribute("participationIdx", participationIdx);
         model.addAttribute("sessionMember", sessionMember.getMemberId());
+    }
+    private void notLoggedInUser(int participationIdx, Model model, ParticipationResponseDto participation, List<ParticipationCommentResponseDto> participationComments){
+        model.addAttribute("participationComments", participationComments);
+        model.addAttribute("participation", participation);
+        model.addAttribute("participationIdx", participationIdx);
     }
 
 

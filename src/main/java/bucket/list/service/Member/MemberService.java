@@ -162,7 +162,6 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 
         if(encoder.matches(updatePasswordDto.getCurrentPassword(),byMemberEmail.get().getMemberPassword())) {
 
-
             String memberPassword = encoder.encode(updatePasswordDto.getUpdatePassword());
 
             byMemberEmail.get().setMemberPassword(memberPassword);

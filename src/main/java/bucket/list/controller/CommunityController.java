@@ -6,6 +6,8 @@ import bucket.list.domain.Community;
 import bucket.list.communitydto.CommunityRequestDto;
 import bucket.list.communitydto.CommunityResponseDto;
 import bucket.list.memberdto.SessionMember;
+import bucket.list.participationdto.ParticipationCommentResponseDto;
+import bucket.list.participationdto.ParticipationResponseDto;
 import bucket.list.service.Community.CommunityCommentService;
 import bucket.list.service.Community.CommunityService;
 import lombok.RequiredArgsConstructor;
@@ -80,29 +82,26 @@ public class CommunityController {
 
         List<CommunityCommentResponseDto> comments = communityResponseDto.getComments();
 
-        try{
-            if(sessionMember !=null&&sessionMember.getMemberId().equals(communityResponseDto.getMember().getMemberId())) {
-                sendCommunity(communityIdx,model, communityResponseDto,comments,sessionMember);
-            }else{
-                sendCommunity(communityIdx,model, communityResponseDto,comments,sessionMember);
-            }
-            return "community/read";
-        } catch (NullPointerException e){
+        if(sessionMember !=null&&sessionMember.getMemberId().equals(communityResponseDto.getMember().getMemberId())) {
             sendCommunity(communityIdx,model, communityResponseDto,comments,sessionMember);
-            return "community/read";
+        }else{
+            notLoggedInUser(communityIdx,model, communityResponseDto,comments);
         }
+        return "community/read";
 
     }
 
-    private void sendCommunity(int communityIdx, Model model,
-                               CommunityResponseDto community,
-                               List<CommunityCommentResponseDto> communityComments,
-                               @LoginUser SessionMember sessionMember) {
-
+    private void sendCommunity(int communityIdx, Model model, CommunityResponseDto community, List<CommunityCommentResponseDto> communityComments, @LoginUser SessionMember sessionMember) {
         model.addAttribute("comments", communityComments);
         model.addAttribute("community", community);
         model.addAttribute("communityIdx", communityIdx);
         model.addAttribute("sessionMember", sessionMember.getMemberId());
+    }
+
+    private void notLoggedInUser(int communityIdx, Model model, CommunityResponseDto community, List<CommunityCommentResponseDto> communityComments){
+        model.addAttribute("communityComments", communityComments);
+        model.addAttribute("community", community);
+        model.addAttribute("communityIdx", communityIdx);
     }
 
     @GetMapping("/edit/{communityIdx}")      // 게시글 수정을 위한 form 페이지(이전 값 불러옴)
@@ -118,7 +117,7 @@ public class CommunityController {
                                   @PathVariable int communityIdx, MultipartFile file,
                                   @LoginUser SessionMember sessionMember) throws IOException {
 
-            communityService.save(communityRequestDto, file,sessionMember.getMemberId());
+        communityService.save(communityRequestDto, file,sessionMember.getMemberId());
             
         return "redirect:/community/{communityIdx}";
     }
