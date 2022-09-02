@@ -19,4 +19,5 @@ public class CommunityCommentResponseDto {
         this.member = comment.getMember();
         this.community = comment.getCommunity();
     }
+
 }
