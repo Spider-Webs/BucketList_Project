@@ -36,7 +36,7 @@ public class Community {
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)//REMOVE 설정이유는 게시글 삭제시 해당 게시글에대한 댓글도 같이 삭제시키기위함
     @OrderBy(value = "comment_idx DESC" )//최신 댓글부터 보기위해, 기본키 내림차순으로 정렬
-    private List<CommunityComment> comments = new ArrayList<>();
+    private List<CommunityComment> comments;
 
     @PrePersist
     public void localAboutDate(){

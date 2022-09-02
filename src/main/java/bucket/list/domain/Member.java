@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Setter
 @Getter
 @Entity
-@Table(indexes = @Index(name = "member_index", columnList = "member_name"))
 public class Member implements Serializable {
 
     @Id
