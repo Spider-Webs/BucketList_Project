@@ -24,7 +24,6 @@ public class BootConfig implements WebMvcConfigurer {
                 .addResourceLocations(resourcePath);
     }
 
-
     @Bean
     public ReloadableResourceBundleMessageSource messageSource(){
         ReloadableResourceBundleMessageSource res = new ReloadableResourceBundleMessageSource();
