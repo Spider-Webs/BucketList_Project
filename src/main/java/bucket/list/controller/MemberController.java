@@ -56,14 +56,12 @@ public class MemberController {
 
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("member") MemberFormDto memberFormDto, BindingResult bindingResult,Model model){
-
         if(bindingResult.hasErrors()){
             return "members/create";
         }
-            try {
+        try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
-
         }catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
             return "members/create";

@@ -53,7 +53,8 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         if(!memberId.isEmpty()){
             throw new IllegalStateException(ErrorMessage.ALREADY_REGISTER.getMessage());
         }
-//        memberId.orElseThrow(() -> new IllegalStateException(existId));
+//        memberId.orElseThrow(() -> new IllegalStateException(ErrorMessage.ALREADY_REGISTER.getMessage()));
+
     }
     private void memberEmailExist(Member member){ // 중복가입확인여부 메서드
         Optional<Member> memberEmail = memberRepository.findByMemberEmail(member.getMemberEmail());
