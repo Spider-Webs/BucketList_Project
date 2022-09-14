@@ -48,7 +48,7 @@ public class ParticipationController {
         return "participation/main";
     }
 
-    @GetMapping("/login/write")
+    @GetMapping("/login/writing")
     //글 추가하는 view보여주는 메서드
     public String addForm(Model model){
 
@@ -57,7 +57,7 @@ public class ParticipationController {
         return "participation/write";
     }
 
-    @PostMapping("/login/write")
+    @PostMapping("/login/writing")
     public String add(@LoginUser SessionMember sessionMember, Model model,
                       ParticipationRequestDto participationRequestDto, MultipartFile file) throws IOException {
 

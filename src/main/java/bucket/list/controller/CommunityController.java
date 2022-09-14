@@ -48,7 +48,7 @@ public class CommunityController {
         return "community/main";
     }
 
-    @GetMapping("/login/create")
+    @GetMapping("/login/writing")
     public String createForm(Model model){        // 게시물 작성 폼
 
         model.addAttribute("community", new Community());
@@ -56,7 +56,7 @@ public class CommunityController {
         return "community/write";
     }
 
-    @PostMapping("/login/create")
+    @PostMapping("/login/writing")
     public String createCommunity(@LoginUser SessionMember sessionMember,
                                   CommunityRequestDto communityRequestDto,
                                   MultipartFile file, Model model) throws IOException {        // 커뮤니티 게시물 작성 폼

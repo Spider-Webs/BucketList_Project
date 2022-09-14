@@ -62,20 +62,20 @@ public class NoticeController {
     }
 
     //글쓰기페이지
-    @GetMapping("/write")
+    @GetMapping("/writing")
     public String writeForm(Model model ){
 
         model.addAttribute("notice", new NoticeDto());
 
-        return "notice/write";
+        return "notice/writing";
     }
 
 
-    @PostMapping("/write")
+    @PostMapping("/writing")
     public String write(@Valid @ModelAttribute("notice") NoticeDto noticeDto, MultipartFile file, @LoginUser SessionMember sessionMember, BindingResult bindingResult) throws IOException {
 
         if(bindingResult.hasErrors()){
-            return "notice/write";
+            return "notice/writing";
         }
 
         log.info("text: {},id: {}, file{}",noticeDto.getNoticeText(),noticeDto.getNoticeNumber(),file);

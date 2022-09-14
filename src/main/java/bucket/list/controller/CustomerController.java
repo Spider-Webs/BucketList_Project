@@ -53,7 +53,7 @@ public class CustomerController {
     }
 
     //고객센터 글작성 보여주는 메서드
-    @GetMapping("/write")
+    @GetMapping("/writing")
     public String writeForm(Model model){
 
         model.addAttribute("customer", new Customer());
@@ -61,7 +61,7 @@ public class CustomerController {
         return "/customer/write";
     }
     //고객센터 글작성폼에서 넘어오는 메서드
-    @PostMapping("/write")
+    @PostMapping("/writing")
     public String writeForm(@Valid  CustomerDto customerDto, BindingResult bindingResult, @LoginUser SessionMember sessionMember, MultipartFile file) throws IOException {
 
         if(bindingResult.hasErrors()){
